@@ -17,6 +17,7 @@ export default function MainUI() {
   const [isDownloading, setIsDownloading] = useState(false);
   const [copied, setCopied] = useState(false);
   const [toast, setToast] = useState('');
+  const [isSendingDiscord, setIsSendingDiscord] = useState(false);
 
   const showToast = (msg) => {
     setToast(msg);
