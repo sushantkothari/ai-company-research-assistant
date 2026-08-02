@@ -4,12 +4,13 @@ export async function POST(request) {
   try {
     const formData = await request.formData();
     const file = formData.get('file'); // PDF Blob
-    const dataStr = formData.get('data');
+    const dataEntry = formData.get('data');
 
-    if (!file || !dataStr) {
+    if (!file || !dataEntry) {
       return NextResponse.json({ error: 'Missing file or data' }, { status: 400 });
     }
 
+    const dataStr = typeof dataEntry.text === 'function' ? await dataEntry.text() : String(dataEntry);
     const data = JSON.parse(dataStr);
     const { companyName, website, applicantName, applicantEmail, channelId, token } = data;
 

@@ -144,16 +144,19 @@ export default function MainUI() {
       const pdfArrayBuffer = await pdfWorker.outputPdf('arraybuffer');
       const pdfBlob = new Blob([pdfArrayBuffer], { type: 'application/pdf' });
 
+      const jsonPayload = JSON.stringify({
+        companyName: (data.companyName || '').replace(/[^\x00-\x7F]/g, ''),
+        website: data.website || '',
+        applicantName: (settings.applicantName || '').replace(/[^\x00-\x7F]/g, ''),
+        applicantEmail: settings.applicantEmail || '',
+        channelId: settings.discordChannel || '',
+        token: settings.discordToken || ''
+      });
+      const dataBlob = new Blob([jsonPayload], { type: 'application/json' });
+
       const formData = new FormData();
       formData.append('file', pdfBlob, 'report.pdf');
-      formData.append('data', JSON.stringify({
-        companyName: data.companyName,
-        website: data.website,
-        applicantName: settings.applicantName,
-        applicantEmail: settings.applicantEmail,
-        channelId: settings.discordChannel,
-        token: settings.discordToken
-      }));
+      formData.append('data', dataBlob);
 
       const response = await fetch('/api/discord', {
         method: 'POST',
