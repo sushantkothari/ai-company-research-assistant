@@ -31,7 +31,7 @@ CRITICAL RULES:
   "products": ["Product/Service 1", "Product/Service 2"],
   "painPoints": ["Insightful pain point 1 based on industry", "Insightful pain point 2"],
   "competitors": [
-    { "name": "Competitor 1", "website": "URL" }
+    { "name": "Competitor 1", "website": "URL", "reason": "1 concise sentence explaining exactly why they compete based on industry, product, or geography." }
   ],
   "confidenceScore": 85, // Integer 0-100 based on data quality
   "sourcesUsed": ["List of URLs you relied on"]
@@ -106,10 +106,10 @@ async function getDemoResponse(prompt) {
         "Ensuring regulatory compliance and safety approval for Full Self-Driving (FSD) software."
       ],
       competitors: [
-        { "name": "BYD Auto", "website": "https://byd.com" },
-        { "name": "Rivian", "website": "https://rivian.com" },
-        { "name": "Lucid Motors", "website": "https://lucidmotors.com" },
-        { "name": "Ford Electric", "website": "https://ford.com" }
+        { "name": "BYD Auto", "website": "https://byd.com", "reason": "Major global competitor in electric vehicles and battery technology." },
+        { "name": "Rivian", "website": "https://rivian.com", "reason": "Direct competitor in the premium EV and electric truck market." },
+        { "name": "Lucid Motors", "website": "https://lucidmotors.com", "reason": "Competes directly with Tesla's premium Model S sedan." },
+        { "name": "Ford Electric", "website": "https://ford.com", "reason": "Legacy automaker aggressively expanding into the EV space." }
       ],
       confidenceScore: 98,
       sourcesUsed: [
@@ -139,9 +139,9 @@ async function getDemoResponse(prompt) {
         "Optimizing payment authorization rates across legacy banking networks."
       ],
       competitors: [
-        { "name": "Adyen", "website": "https://adyen.com" },
-        { "name": "PayPal / Braintree", "website": "https://paypal.com" },
-        { "name": "Checkout.com", "website": "https://checkout.com" }
+        { "name": "Adyen", "website": "https://adyen.com", "reason": "Global payment platform competing for enterprise clients." },
+        { "name": "PayPal / Braintree", "website": "https://paypal.com", "reason": "Major player in online payments and digital wallets." },
+        { "name": "Checkout.com", "website": "https://checkout.com", "reason": "Direct competitor offering similar API-first payment solutions." }
       ],
       confidenceScore: 96,
       sourcesUsed: [
@@ -170,10 +170,10 @@ async function getDemoResponse(prompt) {
         "Standardizing structured data extraction across unstructured web sources."
       ],
       competitors: [
-        { "name": "TCS (Tata Consultancy Services)", "website": "https://tcs.com" },
-        { "name": "Infosys", "website": "https://infosys.com" },
-        { "name": "Wipro", "website": "https://wipro.com" },
-        { "name": "Persistent Systems", "website": "https://persistent.com" }
+        { "name": "TCS (Tata Consultancy Services)", "website": "https://tcs.com", "reason": "Global IT services and consulting giant." },
+        { "name": "Infosys", "website": "https://infosys.com", "reason": "Competes in digital transformation and AI integration services." },
+        { "name": "Wipro", "website": "https://wipro.com", "reason": "Major provider of software and consulting solutions." },
+        { "name": "Persistent Systems", "website": "https://persistent.com", "reason": "Specialized in software engineering and cloud infrastructure." }
       ],
       confidenceScore: 95,
       sourcesUsed: [
@@ -201,9 +201,9 @@ async function getDemoResponse(prompt) {
       "Maintaining real-time data sync across multi-cloud environments."
     ],
     competitors: [
-      { "name": "Competitor Alpha", "website": "https://example.com/alpha" },
-      { "name": "Competitor Beta", "website": "https://example.com/beta" },
-      { "name": "Competitor Gamma", "website": "https://example.com/gamma" }
+      { "name": "Competitor Alpha", "website": "https://example.com/alpha", "reason": "Offers similar AI workflow automation software." },
+      { "name": "Competitor Beta", "website": "https://example.com/beta", "reason": "Competes in enterprise cloud analytics." },
+      { "name": "Competitor Gamma", "website": "https://example.com/gamma", "reason": "Direct competitor in business intelligence dashboards." }
     ],
     confidenceScore: 90,
     sourcesUsed: [

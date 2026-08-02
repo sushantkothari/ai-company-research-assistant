@@ -488,3 +488,144 @@
     page-break-inside: avoid;
   }
 }
+
+.pdfTemplate {
+  position: absolute;
+  left: -9999px;
+  top: -9999px;
+  width: 850px; /* Letter width roughly */
+  background: white;
+  color: #1a1a1a;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+}
+
+.pdfCover {
+  height: 1050px; /* Force page height */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 40px;
+  border: 10px solid #f3f4f6;
+  box-sizing: border-box;
+}
+
+.pdfCoverHeader h1 {
+  font-size: 3rem;
+  color: #0f172a;
+  margin-bottom: 10px;
+}
+
+.pdfCoverHeader p {
+  font-size: 1.25rem;
+  color: #64748b;
+  margin-bottom: 20px;
+}
+
+.pdfDate {
+  font-weight: bold;
+  color: #334155;
+  margin-bottom: 60px;
+}
+
+.pdfCompanyTitle h2 {
+  font-size: 4rem;
+  color: #2563eb;
+  margin-bottom: 20px;
+}
+
+.pdfContactInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 1.2rem;
+  color: #475569;
+  margin-bottom: 80px;
+}
+
+.pdfApplicant {
+  margin-top: auto;
+  text-align: center;
+  color: #64748b;
+  border-top: 1px solid #cbd5e1;
+  padding-top: 20px;
+  width: 50%;
+}
+
+.pdfPageBreak {
+  page-break-before: always;
+}
+
+.pdfPage {
+  padding: 60px;
+  min-height: 1050px;
+  box-sizing: border-box;
+}
+
+.pdfSection {
+  margin-bottom: 40px;
+}
+
+.pdfSection h3 {
+  font-size: 1.5rem;
+  color: #0f172a;
+  border-bottom: 2px solid #2563eb;
+  padding-bottom: 8px;
+  margin-bottom: 20px;
+}
+
+.pdfSummary {
+  font-size: 1.1rem;
+  color: #334155;
+}
+
+.pdfList {
+  padding-left: 20px;
+  margin: 0;
+}
+
+.pdfList li {
+  margin-bottom: 10px;
+  color: #334155;
+}
+
+.pdfTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.pdfTable th, .pdfTable td {
+  border: 1px solid #cbd5e1;
+  padding: 12px;
+  text-align: left;
+}
+
+.pdfTable th {
+  background-color: #f1f5f9;
+  color: #0f172a;
+  font-weight: bold;
+}
+
+.pdfTable td {
+  color: #334155;
+}
+
+.pdfSources {
+  font-family: monospace;
+  font-size: 0.9rem;
+  color: #64748b;
+  background: #f8fafc;
+  padding: 15px;
+  border-radius: 4px;
+}
+
+.compReason {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-top: 0.5rem;
+  border-top: 1px dashed var(--border-color);
+  padding-top: 0.5rem;
+}
