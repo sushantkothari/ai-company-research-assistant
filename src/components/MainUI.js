@@ -5,12 +5,19 @@ import styles from './MainUI.module.css';
 import { useSettings } from '@/context/SettingsContext';
 
 const MODELS = [
-  { id: 'meta-llama/llama-3.3-70b-instruct:free', name: 'Llama 3.3 70B (FREE)' },
-  { id: 'google/gemini-2.0-flash-exp:free', name: 'Gemini 2.0 Flash (FREE)' },
-  { id: 'deepseek/deepseek-r1:free', name: 'DeepSeek R1 (FREE)' },
+  { id: 'anthropic/claude-3.5-sonnet', name: 'Claude Sonnet 3.5' },
   { id: 'openai/gpt-4o-mini', name: 'GPT-4o Mini (Paid)' },
   { id: 'openai/gpt-4o', name: 'GPT-4o (Paid)' },
-  { id: 'anthropic/claude-3.5-sonnet', name: 'Claude 3.5 Sonnet' }
+  { id: 'meta-llama/llama-3.3-70b-instruct:free', name: 'Llama 3.3 70B (Free)' },
+  { id: 'google/gemini-2.0-flash-exp:free', name: 'Gemini 2.0 Flash (Free)' },
+  { id: 'deepseek/deepseek-r1:free', name: 'DeepSeek R1 (Free)' }
+];
+
+const SAMPLE_BADGES = [
+  { label: 'notion.so', value: 'notion.so' },
+  { label: 'Figma', value: 'Figma' },
+  { label: 'Linear', value: 'Linear' },
+  { label: 'Vercel', value: 'Vercel' }
 ];
 
 export default function MainUI() {
@@ -23,6 +30,7 @@ export default function MainUI() {
   const [isDownloading, setIsDownloading] = useState(false);
   const [isSendingDiscord, setIsSendingDiscord] = useState(false);
   const [discordSuccess, setDiscordSuccess] = useState(false);
+  const [savedConfigToast, setSavedConfigToast] = useState(false);
 
   const handleNewResearch = () => {
     setStatus('idle');
@@ -32,9 +40,14 @@ export default function MainUI() {
     setDiscordSuccess(false);
   };
 
-  const handleSearch = async (e) => {
-    e.preventDefault();
-    if (!input.trim()) return;
+  const handleSaveConfig = () => {
+    setSavedConfigToast(true);
+    setTimeout(() => setSavedConfigToast(false), 2500);
+  };
+
+  const executeResearch = async (queryToSearch) => {
+    const q = queryToSearch || input;
+    if (!q.trim()) return;
     
     setStatus('loading');
     setResult(null);
@@ -46,7 +59,7 @@ export default function MainUI() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          query: input,
+          query: q,
           model: settings.model,
           openRouterKey: settings.openRouterKey,
           serperKey: settings.serperKey
@@ -66,6 +79,16 @@ export default function MainUI() {
       setErrorMsg(err.message);
       setStatus('error');
     }
+  };
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    executeResearch();
+  };
+
+  const handleBadgeClick = (badgeValue) => {
+    setInput(badgeValue);
+    executeResearch(badgeValue);
   };
 
   const downloadPDF = async () => {
@@ -155,13 +178,21 @@ export default function MainUI() {
       <aside className={styles.sidebar}>
         <div className={styles.sidebarHeader}>
           <div className={styles.logoRow}>
-            <div className={styles.logoIcon}></div>
+            <div className={styles.logoIcon}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="#38bdf8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M2 17L12 22L22 17" stroke="#38bdf8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M2 12L12 17L22 12" stroke="#38bdf8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
             <div className={styles.logoText}>
               <div className={styles.reluBrand}>Relu Consultancy</div>
               <div className={styles.appTitle}>COMPANY INTELLIGENCE</div>
             </div>
           </div>
-          <button className={styles.newResearchBtn} onClick={handleNewResearch}>+ New Research</button>
+          <button className={styles.newResearchBtn} onClick={handleNewResearch}>
+            <span className={styles.plusSign}>+</span> New Research
+          </button>
         </div>
 
         <div className={styles.tabsContainer}>
@@ -186,7 +217,7 @@ export default function MainUI() {
                 OPENROUTER API KEY
                 <input 
                   type="password" 
-                  className={styles.input} 
+                  className={styles.inputMono} 
                   value={settings.openRouterKey}
                   onChange={(e) => updateSetting('openRouterKey', e.target.value)}
                   placeholder="sk-or-v1-..."
@@ -197,10 +228,10 @@ export default function MainUI() {
                 SERPER.DEV API KEY
                 <input 
                   type="password" 
-                  className={styles.input} 
+                  className={styles.inputMono} 
                   value={settings.serperKey}
                   onChange={(e) => updateSetting('serperKey', e.target.value)}
-                  placeholder="Enter Serper key"
+                  placeholder="Your Serper key..."
                 />
               </label>
               
@@ -208,7 +239,7 @@ export default function MainUI() {
                 AI MODEL
                 <div className={styles.selectWrapper}>
                   <select 
-                    className={styles.select}
+                    className={styles.selectMono}
                     value={settings.model}
                     onChange={(e) => updateSetting('model', e.target.value)}
                   >
@@ -217,16 +248,30 @@ export default function MainUI() {
                 </div>
               </label>
 
-              <button className={styles.saveConfigBtn}>Save Configuration</button>
+              <button className={styles.saveConfigBtn} onClick={handleSaveConfig}>
+                {savedConfigToast ? 'Saved ✓' : 'Save Configuration'}
+              </button>
 
               <div className={styles.howItWorks}>
-                <h4>HOW IT WORKS</h4>
-                <ol>
-                  <li><strong>Enter a company name</strong> or URL in the search bar.</li>
-                  <li><strong>The AI agents</strong> will crawl the web, analyzing the company&apos;s official site, news, and directories.</li>
-                  <li><strong>Wait ~20 seconds</strong> while our reasoning engine compiles pain points and competitor analysis.</li>
-                  <li><strong>Download a PDF</strong> or push the report directly to Discord.</li>
-                </ol>
+                <h4 className={styles.monoHeading}>HOW IT WORKS</h4>
+                <div className={styles.stepList}>
+                  <div className={styles.stepItem}>
+                    <span className={styles.stepBadge}>1</span>
+                    <span>Enter a company name or URL</span>
+                  </div>
+                  <div className={styles.stepItem}>
+                    <span className={styles.stepBadge}>2</span>
+                    <span>Serper.dev searches and crawls it</span>
+                  </div>
+                  <div className={styles.stepItem}>
+                    <span className={styles.stepBadge}>3</span>
+                    <span>OpenRouter AI generates insights</span>
+                  </div>
+                  <div className={styles.stepItem}>
+                    <span className={styles.stepBadge}>4</span>
+                    <span>Download a professional PDF report</span>
+                  </div>
+                </div>
               </div>
 
               <div className={styles.poweredBy}>
@@ -246,7 +291,7 @@ export default function MainUI() {
                 BOT TOKEN
                 <input 
                   type="password" 
-                  className={styles.input} 
+                  className={styles.inputMono} 
                   value={settings.discordToken}
                   onChange={(e) => updateSetting('discordToken', e.target.value)}
                   placeholder="Bot token..."
@@ -257,7 +302,7 @@ export default function MainUI() {
                 CHANNEL ID
                 <input 
                   type="text" 
-                  className={styles.input} 
+                  className={styles.inputMono} 
                   value={settings.discordChannel}
                   onChange={(e) => updateSetting('discordChannel', e.target.value)}
                   placeholder="Channel ID..."
@@ -265,7 +310,7 @@ export default function MainUI() {
               </label>
 
               <div className={styles.applicantDetails}>
-                <h4>APPLICANT DETAILS</h4>
+                <h4 className={styles.monoHeading}>APPLICANT DETAILS</h4>
                 <label className={styles.label}>
                   Full Name
                   <input 
@@ -297,25 +342,32 @@ export default function MainUI() {
       <main className={styles.mainArea}>
         <header className={styles.topBar}>
           <span className={styles.topBarTitle}>Company Research</span>
-          <span className={styles.liveBadge}>LIVE</span>
+          <span className={styles.liveBadge}>
+            <span className={styles.greenDot}></span> LIVE
+          </span>
         </header>
 
         <div className={styles.mainContentBody}>
           {status === 'idle' && (
             <div className={styles.heroSection}>
               <div className={styles.heroTag}>AI-POWERED INTELLIGENCE</div>
-              <h1 className={styles.heroHeading}>Know any company in minutes.</h1>
+              <h1 className={styles.heroHeading}>
+                Know any company<br />in minutes.
+              </h1>
               <p className={styles.heroSubtext}>
                 Enter a company name or website URL to get AI-powered insights, competitor analysis, pain points, and a professional PDF report.
               </p>
               <div className={styles.badgeRow}>
-                <span className={styles.sampleBadge}>stripe.com</span>
-                <span className={styles.sampleBadge}>Tesla</span>
-                <span className={styles.sampleBadge}>Microsoft</span>
-                <span className={styles.sampleBadge}>OpenAI</span>
+                {SAMPLE_BADGES.map((b, i) => (
+                  <button key={i} className={styles.sampleBadge} onClick={() => handleBadgeClick(b.value)}>
+                    {b.label}
+                  </button>
+                ))}
               </div>
               <div className={styles.heroDivider}>
-                <span>Configure API keys in the sidebar to get started</span>
+                <span className={styles.dividerLine}></span>
+                <span className={styles.dividerText}>Configure API keys in the sidebar to get started</span>
+                <span className={styles.dividerLine}></span>
               </div>
             </div>
           )}
@@ -323,13 +375,13 @@ export default function MainUI() {
           {status === 'loading' && (
             <div className={styles.loadingContainer}>
               <div className={styles.spinner}></div>
-              <p>Analyzing company data...</p>
+              <p className={styles.loadingText}>Analyzing company data via AI agents...</p>
             </div>
           )}
 
           {status === 'error' && (
             <div className={styles.errorContainer}>
-              <p>Error: {errorMsg}</p>
+              <p className={styles.errorText}>Error: {errorMsg}</p>
             </div>
           )}
 
@@ -404,18 +456,20 @@ export default function MainUI() {
           )}
         </div>
 
-        <form className={styles.searchBarForm} onSubmit={handleSearch}>
-          <input 
-            type="text"
-            className={styles.searchInput}
-            placeholder="Enter a company name (e.g. Aurora Labs) or website URL (e.g. https://aurora.dev)..."
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            disabled={status === 'loading'}
-          />
-          <button type="submit" className={styles.searchSubmitBtn} disabled={status === 'loading'}>
-            Research &rarr;
-          </button>
+        <form className={styles.searchBarForm} onSubmit={handleSearchSubmit}>
+          <div className={styles.searchInputWrapper}>
+            <input 
+              type="text"
+              className={styles.searchInput}
+              placeholder="Enter a company name (e.g. Aurora Labs) or website URL (e.g. https://aurora.dev)..."
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              disabled={status === 'loading'}
+            />
+            <button type="submit" className={styles.searchSubmitBtn} disabled={status === 'loading'}>
+              Research &rarr;
+            </button>
+          </div>
           <div className={styles.searchHint}>ENTER TO RESEARCH &bull; SHIFT+ENTER FOR NEW LINE</div>
         </form>
 
