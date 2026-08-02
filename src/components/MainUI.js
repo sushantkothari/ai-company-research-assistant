@@ -449,16 +449,18 @@ export default function MainUI() {
                 <div className={styles.completeBadge}>RESEARCH COMPLETE</div>
               </div>
 
-              <div className={styles.infoColumns}>
-                <div className={styles.infoCol}>
-                  <div className={styles.infoLabel}>PHONE</div>
-                  <div className={styles.infoValue}>{result.phone || 'Not publicly listed'}</div>
-                </div>
-                <div className={styles.infoCol}>
-                  <div className={styles.infoLabel}>ADDRESS</div>
-                  <div className={styles.infoValue}>{result.address || 'Information unavailable'}</div>
-                </div>
-              </div>
+              <table className={styles.uiInfoTable}>
+                <tbody>
+                  <tr>
+                    <td className={styles.uiInfoLabel}>PHONE</td>
+                    <td className={styles.uiInfoValue}>{result.phone || 'Not publicly listed'}</td>
+                  </tr>
+                  <tr>
+                    <td className={styles.uiInfoLabel}>ADDRESS</td>
+                    <td className={styles.uiInfoValue}>{result.address || 'Information unavailable'}</td>
+                  </tr>
+                </tbody>
+              </table>
 
               <div className={styles.sectionBlock}>
                 <h3 className={styles.sectionTitle}>COMPANY SUMMARY</h3>
@@ -472,31 +474,44 @@ export default function MainUI() {
 
               <div className={styles.sectionBlock}>
                 <h3 className={styles.sectionTitle}>PRODUCTS & SERVICES</h3>
-                <div className={styles.pillsContainer}>
+                <div className={styles.richList}>
                   {result.products?.map((item, i) => (
-                    <span key={i} className={styles.pill}>{item}</span>
+                    <div key={i} className={styles.richItem}>
+                      <span className={styles.richItemTitle}>{typeof item === 'string' ? item : item.name}</span>
+                      {typeof item === 'object' && item.description && (
+                        <p className={styles.richItemDesc}>{item.description}</p>
+                      )}
+                    </div>
                   ))}
                 </div>
               </div>
 
               <div className={styles.sectionBlock}>
                 <h3 className={styles.sectionTitle}>AI-GENERATED PAIN POINTS</h3>
-                <ul className={styles.bulletList}>
+                <div className={styles.richList}>
                   {result.painPoints?.map((item, i) => (
-                    <li key={i}>{item}</li>
+                    <div key={i} className={styles.richItem}>
+                      <span className={styles.richItemTitle}>{typeof item === 'string' ? item : item.topic}</span>
+                      {typeof item === 'object' && item.explanation && (
+                        <p className={styles.richItemDesc}>{item.explanation}</p>
+                      )}
+                    </div>
                   ))}
-                </ul>
+                </div>
               </div>
 
               <div className={styles.sectionBlock}>
                 <h3 className={styles.sectionTitle}>COMPETITORS</h3>
                 <div className={styles.competitorGrid}>
                   {result.competitors?.map((comp, i) => (
-                    <div key={i} className={styles.compItem}>
-                      <div className={styles.compName}>{comp.name}</div>
-                      <a href={comp.website?.startsWith('http') ? comp.website : `https://${comp.website}`} target="_blank" rel="noreferrer" className={styles.compUrl}>
-                        {comp.website || 'No URL'}
-                      </a>
+                    <div key={i} className={styles.compCard}>
+                      <div className={styles.compHeader}>
+                        <div className={styles.compName}>{comp.name}</div>
+                        <a href={comp.website?.startsWith('http') ? comp.website : `https://${comp.website}`} target="_blank" rel="noreferrer" className={styles.compUrl}>
+                          {comp.website || 'No URL'}
+                        </a>
+                      </div>
+                      {comp.reason && <div className={styles.compReason}>{comp.reason}</div>}
                     </div>
                   ))}
                 </div>
@@ -570,22 +585,44 @@ export default function MainUI() {
               <p className={styles.pdfParagraph}>{result.targetAudience || 'Information unavailable'}</p>
 
               <h2 className={styles.pdfSectionTitle}>PRODUCTS &amp; SERVICES</h2>
-              <ul className={styles.pdfBullets}>
-                {result.products?.map((item, i) => <li key={i}>{item}</li>)}
-              </ul>
+              <div className={styles.pdfRichList}>
+                {result.products?.map((item, i) => (
+                  <div key={i} className={styles.pdfRichItem}>
+                    <div className={styles.pdfRichTitle}>• {typeof item === 'string' ? item : item.name}</div>
+                    {typeof item === 'object' && item.description && (
+                      <div className={styles.pdfRichDesc}>{item.description}</div>
+                    )}
+                  </div>
+                ))}
+              </div>
 
               <h2 className={styles.pdfSectionTitle}>AI-GENERATED PAIN POINTS</h2>
-              <ul className={styles.pdfBullets}>
-                {result.painPoints?.map((item, i) => <li key={i}>{item}</li>)}
-              </ul>
+              <div className={styles.pdfRichList}>
+                {result.painPoints?.map((item, i) => (
+                  <div key={i} className={styles.pdfRichItem}>
+                    <div className={styles.pdfRichTitle}>• {typeof item === 'string' ? item : item.topic}</div>
+                    {typeof item === 'object' && item.explanation && (
+                      <div className={styles.pdfRichDesc}>{item.explanation}</div>
+                    )}
+                  </div>
+                ))}
+              </div>
 
-              <h2 className={styles.pdfSectionTitle}>COMPETITORS</h2>
+              <h2 className={styles.pdfSectionTitle}>COMPETITOR ANALYSIS</h2>
               <table className={styles.pdfCompTable}>
+                <thead>
+                  <tr>
+                    <th>Company Name</th>
+                    <th>Website</th>
+                    <th>AI Reasoning</th>
+                  </tr>
+                </thead>
                 <tbody>
                   {result.competitors?.map((comp, i) => (
                     <tr key={i}>
-                      <td className={styles.pdfCompNameCol}>{comp.name}</td>
-                      <td className={styles.pdfCompUrlCol}>{comp.website}</td>
+                      <td><strong>{comp.name}</strong></td>
+                      <td>{comp.website}</td>
+                      <td>{comp.reason || 'Information unavailable'}</td>
                     </tr>
                   ))}
                 </tbody>
