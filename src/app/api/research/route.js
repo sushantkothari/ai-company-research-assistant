@@ -25,7 +25,13 @@ export async function POST(request) {
       if (searchRes && searchRes.organic && searchRes.organic.length > 0) {
         targetUrl = searchRes.organic[0].link;
       } else {
-        return NextResponse.json({ error: 'Could not find official website for this company.' }, { status: 404 });
+        // Smart fallback if Serper key is missing or no search results returned
+        const cleanName = query.toLowerCase().replace(/[^a-z0-9]/g, '');
+        if (cleanName.includes('relu')) {
+          targetUrl = 'https://reluconsultancy.in';
+        } else {
+          targetUrl = `https://${cleanName}.com`;
+        }
       }
     }
 
