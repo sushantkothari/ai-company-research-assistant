@@ -251,32 +251,6 @@ export default function MainUI() {
               <button className={styles.saveConfigBtn} onClick={handleSaveConfig}>
                 {savedConfigToast ? 'Saved ✓' : 'Save Configuration'}
               </button>
-
-              <div className={styles.howItWorks}>
-                <h4 className={styles.monoHeading}>HOW IT WORKS</h4>
-                <div className={styles.stepList}>
-                  <div className={styles.stepItem}>
-                    <span className={styles.stepBadge}>1</span>
-                    <span>Enter a company name or URL</span>
-                  </div>
-                  <div className={styles.stepItem}>
-                    <span className={styles.stepBadge}>2</span>
-                    <span>Serper.dev searches and crawls it</span>
-                  </div>
-                  <div className={styles.stepItem}>
-                    <span className={styles.stepBadge}>3</span>
-                    <span>OpenRouter AI generates insights</span>
-                  </div>
-                  <div className={styles.stepItem}>
-                    <span className={styles.stepBadge}>4</span>
-                    <span>Download a professional PDF report</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className={styles.poweredBy}>
-                OPENROUTER &bull; SERPER &bull; JSPDF
-              </div>
             </div>
           )}
 
@@ -284,7 +258,7 @@ export default function MainUI() {
             <div className={styles.settingsGroup}>
               <div className={styles.discordHeaderBox}>
                 <h4>Discord Bot Integration</h4>
-                <p>Configure these settings to instantly send PDF reports to your channel.</p>
+                <p>After research completes, the report auto-sends to your configured channel.</p>
               </div>
               
               <label className={styles.label}>
@@ -305,37 +279,65 @@ export default function MainUI() {
                   className={styles.inputMono} 
                   value={settings.discordChannel}
                   onChange={(e) => updateSetting('discordChannel', e.target.value)}
-                  placeholder="Channel ID..."
+                  placeholder="000000000000000000"
                 />
               </label>
 
               <div className={styles.applicantDetails}>
                 <h4 className={styles.monoHeading}>APPLICANT DETAILS</h4>
-                <label className={styles.label}>
+                <label className={styles.labelSans}>
                   Full Name
                   <input 
                     type="text" 
                     className={styles.input} 
                     value={settings.applicantName}
                     onChange={(e) => updateSetting('applicantName', e.target.value)}
-                    placeholder="Enter your name"
+                    placeholder="Your full name"
                   />
                 </label>
-                <label className={styles.label}>
+                <label className={styles.labelSans}>
                   Email Address
                   <input 
                     type="email" 
                     className={styles.input} 
                     value={settings.applicantEmail}
                     onChange={(e) => updateSetting('applicantEmail', e.target.value)}
-                    placeholder="Enter your email"
+                    placeholder="email@example.com"
                   />
                 </label>
               </div>
 
-              <button className={styles.savedBtn}>Saved ✓</button>
+              <button className={styles.saveDiscordBtn} onClick={handleSaveConfig}>
+                {savedConfigToast ? 'Saved ✓' : 'Save Discord Config'}
+              </button>
             </div>
           )}
+
+          <div className={styles.howItWorks}>
+            <h4 className={styles.monoHeading}>HOW IT WORKS</h4>
+            <div className={styles.stepList}>
+              <div className={styles.stepItem}>
+                <span className={styles.stepBadge}>1</span>
+                <span>Enter a company name or URL</span>
+              </div>
+              <div className={styles.stepItem}>
+                <span className={styles.stepBadge}>2</span>
+                <span>Serper.dev searches and crawls it</span>
+              </div>
+              <div className={styles.stepItem}>
+                <span className={styles.stepBadge}>3</span>
+                <span>OpenRouter AI generates insights</span>
+              </div>
+              <div className={styles.stepItem}>
+                <span className={styles.stepBadge}>4</span>
+                <span>Download a professional PDF report</span>
+              </div>
+            </div>
+          </div>
+
+          <div className={styles.poweredBy}>
+            OPENROUTER &bull; SERPER &bull; JSPDF
+          </div>
         </div>
       </aside>
 
