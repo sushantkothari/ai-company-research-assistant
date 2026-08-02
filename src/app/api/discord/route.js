@@ -47,10 +47,13 @@ export async function POST(request) {
       `- Website: ${website}\n\n` +
       `Please find the generated PDF report attached below.`;
 
+    const safeMessageContent = messageContent.replace(/[^\x00-\x7F]/g, '');
+
     // Official Discord API v10 Multipart Format
     const discordPayload = new FormData();
-    const jsonBlob = new Blob([JSON.stringify({ content: messageContent })], { type: 'application/json' });
-    discordPayload.append('payload_json', jsonBlob);
+    discordPayload.append('payload_json', JSON.stringify({
+      content: safeMessageContent
+    }));
 
     const pdfFile = new File([buffer], fileName, { type: 'application/pdf' });
     discordPayload.append('files[0]', pdfFile);
