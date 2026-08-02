@@ -16,7 +16,7 @@ export async function analyzeCompanyData(prompt, model = 'openai/gpt-4o-mini', c
         messages: [
           {
             role: 'system',
-            content: `You are an elite Lead Data Analyst and Company Researcher. Your job is to extract highly accurate, professional, and actionable insights about a company based ONLY on the provided web scraping and search data.
+            content: `You are a Lead Data Analyst and Company Researcher. Your job is to extract accurate and objective insights about a company based ONLY on the provided web scraping and search data.
 
 CRITICAL RULES:
 1. DO NOT hallucinate. If data is missing or ambiguous, output "Information unavailable". 
@@ -27,7 +27,7 @@ CRITICAL RULES:
   "website": "Verified URL or Information unavailable",
   "phone": "Phone Number or Information unavailable",
   "address": "Full Address or Information unavailable",
-  "summary": "3-4 highly professional, objective sentences summarizing the company's core business, history, and mission.",
+  "summary": "3-4 objective sentences summarizing the company's core business, history, and mission.",
   "products": ["Product/Service 1", "Product/Service 2"],
   "painPoints": ["Insightful pain point 1 based on industry", "Insightful pain point 2"],
   "competitors": [
@@ -157,7 +157,7 @@ async function getDemoResponse(prompt) {
       website: "https://reluconsultancy.in",
       phone: "+91 98765 43210",
       address: "India",
-      summary: "Relu Consultancy is a premier technology services and solution provider specializing in Artificial Intelligence, Automation, Web Scraping, and custom Cloud Software development for global enterprises.",
+      summary: "Relu Consultancy is a technology services and solution provider specializing in Artificial Intelligence, Automation, Web Scraping, and custom Cloud Software development for enterprises.",
       products: [
         "AI & Machine Learning Solutions",
         "Automated Data Extraction & Web Scraping",
@@ -189,7 +189,7 @@ async function getDemoResponse(prompt) {
     website: "https://example.com",
     phone: "+1 (800) 555-0199",
     address: "San Francisco, CA, USA",
-    summary: "Sample Enterprise is an industry-leading technology provider delivering modern cloud, AI, and automation tools designed to optimize business operations and workflow efficiencies.",
+    summary: "Sample Enterprise is a technology provider delivering cloud, AI, and automation tools designed to optimize business operations and workflow efficiencies.",
     products: [
       "Cloud Data Platform",
       "AI Workflow Automation Suite",

@@ -238,17 +238,19 @@ export default function MainUI() {
               <label className={styles.label}>
                 AI MODEL
                 <div className={styles.selectWrapper}>
-                  <select 
-                    className={styles.selectMono}
-                    value={settings.model}
-                    onChange={(e) => updateSetting('model', e.target.value)}
-                  >
-                    {MODELS.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
-                  </select>
-                  <svg className={styles.selectChevron} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="6 9 12 15 18 9"></polyline>
-                  </svg>
-                </div>
+                <select 
+                  className={styles.selectMono}
+                  value={settings.model}
+                  onChange={(e) => updateSetting('model', e.target.value)}
+                >
+                  {MODELS.map(m => (
+                    <option key={m.id} value={m.id}>{m.name}</option>
+                  ))}
+                </select>
+                <svg className={styles.selectChevron} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </div>
               </label>
 
               <button className={styles.saveConfigBtn} onClick={handleSaveConfig}>
@@ -505,6 +507,9 @@ export default function MainUI() {
                 </tbody>
               </table>
 
+              <h2 className={styles.pdfSectionTitle}>EXECUTIVE SUMMARY</h2>
+              <p className={styles.pdfSummary}>{result.summary}</p>
+
               <h2 className={styles.pdfSectionTitle}>PRODUCTS & SERVICES</h2>
               <ul className={styles.pdfBullets}>
                 {result.products?.map((item, i) => <li key={i}>{item}</li>)}
@@ -519,8 +524,11 @@ export default function MainUI() {
               <div className={styles.pdfCompetitorsGrid}>
                 {result.competitors?.map((comp, i) => (
                   <div key={i} className={styles.pdfCompRow}>
-                    <div className={styles.pdfCompName}>{comp.name}</div>
-                    <div className={styles.pdfCompUrl}>{comp.website}</div>
+                    <div className={styles.pdfCompHeader}>
+                      <div className={styles.pdfCompName}>{comp.name}</div>
+                      <div className={styles.pdfCompUrl}>{comp.website}</div>
+                    </div>
+                    <div className={styles.pdfCompReason}>{comp.reason}</div>
                   </div>
                 ))}
               </div>
