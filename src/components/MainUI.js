@@ -124,7 +124,8 @@ export default function MainUI() {
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
       };
       const html2pdf = (await import('html2pdf.js')).default;
-      const pdfBlob = await html2pdf().set(opt).from(element).output('blob');
+      const rawPdf = await html2pdf().set(opt).from(element).outputPdf('blob');
+      const pdfBlob = rawPdf instanceof Blob ? rawPdf : new Blob([rawPdf], { type: 'application/pdf' });
 
       const formData = new FormData();
       formData.append('file', pdfBlob, 'report.pdf');
