@@ -474,3 +474,17 @@
   background: var(--bg-tertiary);
   border-radius: var(--radius-md);
 }
+
+/* PDF Export Improvements */
+@media print {
+  .reportContainer {
+    background: transparent !important;
+    color: black !important;
+  }
+  .reportSection {
+    page-break-inside: avoid;
+  }
+  .competitorCard {
+    page-break-inside: avoid;
+  }
+}

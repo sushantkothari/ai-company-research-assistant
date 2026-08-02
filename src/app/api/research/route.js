@@ -3,29 +3,67 @@ import { searchGoogle } from '@/lib/serper';
 import { scrapeWebsiteDeep } from '@/lib/scraper';
 import { analyzeCompanyData } from '@/lib/openrouter';
 
+// Simple LRU-like in-memory cache for production speed
+const cache = new Map();
+
+const BLOCKED_DOMAINS = [
+  'wikipedia.org', 'linkedin.com', 'facebook.com', 'crunchbase.com', 
+  'bloomberg.com', 'g2.com', 'capterra.com', 'yelp.com', 'glassdoor.com',
+  'yahoo.com', 'forbes.com', 'zoominfo.com', 'owler.com', 'pitchbook.com',
+  'twitter.com', 'x.com', 'instagram.com', 'tiktok.com'
+];
+
+function isBlockedDomain(urlStr) {
+  try {
+    const hostname = new URL(urlStr).hostname.toLowerCase();
+    return BLOCKED_DOMAINS.some(domain => hostname.includes(domain));
+  } catch (e) {
+    return true; // Invalid URL
+  }
+}
+
 export async function POST(request) {
   try {
-    const { query, model } = await request.json();
+    const body = await request.json();
+    let { query, model } = body;
 
-    if (!query) {
-      return NextResponse.json({ error: 'Query is required' }, { status: 400 });
+    // 1. Input Sanitization & Validation
+    if (!query || typeof query !== 'string') {
+      return NextResponse.json({ error: 'Valid query is required' }, { status: 400 });
+    }
+    
+    query = query.trim().substring(0, 150); // Prevent extremely long prompt injection payloads
+    
+    const cacheKey = `${query}_${model}`;
+    if (cache.has(cacheKey)) {
+      console.log('Serving from cache:', query);
+      return NextResponse.json(cache.get(cacheKey));
     }
 
     let targetUrl = query;
     let searchData = null;
 
-    // 1. Identify if it's a URL or Company Name
+    // 2. Robust URL Detection
     const isUrl = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/.test(query);
 
     if (!isUrl) {
-      // It's a company name, find the official website using Serper
+      // Find official website using Serper
       const searchRes = await searchGoogle(`${query} official website`);
       searchData = searchRes;
       
-      if (searchRes && searchRes.organic && searchRes.organic.length > 0) {
-        targetUrl = searchRes.organic[0].link;
-      } else {
-        // Smart fallback if Serper key is missing or no search results returned
+      let foundValidUrl = false;
+      if (searchRes && Array.isArray(searchRes.organic)) {
+        for (const result of searchRes.organic) {
+          if (!isBlockedDomain(result.link)) {
+            targetUrl = result.link;
+            foundValidUrl = true;
+            break;
+          }
+        }
+      }
+      
+      if (!foundValidUrl) {
+        // Smart fallback if Serper key is missing or no valid search results returned
         const cleanName = query.toLowerCase().replace(/[^a-z0-9]/g, '');
         if (cleanName.includes('relu')) {
           targetUrl = 'https://reluconsultancy.in';
@@ -33,61 +71,74 @@ export async function POST(request) {
           targetUrl = `https://${cleanName}.com`;
         }
       }
+    } else {
+      // Ensure scheme exists for direct URLs
+      if (!targetUrl.startsWith('http')) {
+        targetUrl = 'https://' + targetUrl;
+      }
+      try {
+        new URL(targetUrl); // Validate
+      } catch (e) {
+        return NextResponse.json({ error: 'Invalid URL provided.' }, { status: 400 });
+      }
     }
 
-    // 2. Crawl the target website
+    // 3. Resilient Crawling
     const websiteData = await scrapeWebsiteDeep(targetUrl);
 
-    // 3. Search for competitors if needed to enrich context
+    // 4. Competitor Discovery via Search (Supplementing AI Reasoning)
     let competitorSearchContext = '';
-    if (!isUrl) {
-      const compRes = await searchGoogle(`${query} competitors alternatives`);
-      if (compRes && compRes.organic) {
-        competitorSearchContext = compRes.organic.map(r => `${r.title}: ${r.link}`).join('\n');
-      }
-    } else {
-      // Extract domain from url to search
+    let domainForSearch = query;
+    if (isUrl) {
       try {
-        const domain = new URL(targetUrl.startsWith('http') ? targetUrl : `https://${targetUrl}`).hostname;
-        const compRes = await searchGoogle(`${domain} competitors alternatives`);
-        if (compRes && compRes.organic) {
-          competitorSearchContext = compRes.organic.map(r => `${r.title}: ${r.link}`).join('\n');
-        }
+         domainForSearch = new URL(targetUrl).hostname.replace('www.', '');
       } catch (e) {}
     }
+    const compRes = await searchGoogle(`${domainForSearch} top competitors alternatives software industry`);
+    if (compRes && Array.isArray(compRes.organic)) {
+      competitorSearchContext = compRes.organic.slice(0, 5).map(r => `${r.title}: ${r.link}`).join('\n');
+    }
 
-    // 4. Assemble the prompt for OpenRouter
+    // 5. Assemble highly structured AI Prompt
     const prompt = `
-      Target Company/URL: ${query}
+      Target Entity: ${query}
       Identified Official Website: ${targetUrl}
       
       --- Website Crawl Data ---
-      ${websiteData ? websiteData : 'Could not extract website data.'}
+      ${websiteData ? websiteData : 'Could not extract website data. The site might be blocking crawlers or requires JavaScript.'}
       
-      --- Google Search Data (for context) ---
+      --- Google Search Context ---
       ${searchData ? JSON.stringify(searchData.organic?.slice(0, 3)) : ''}
       
-      --- Competitor Search Data ---
+      --- Competitor Search Context ---
       ${competitorSearchContext}
       
       Based on the above data, generate the comprehensive JSON report as requested. 
-      Ensure you extract the company name, phone, address, and list their main products/services.
-      Generate 3 insightful pain points that this company or its customers might face based on their industry.
-      Identify 3-5 real competitors.
+      IMPORTANT INSTRUCTIONS:
+      - Only use supported evidence. If information is unavailable, output "Information unavailable" or omit the field. DO NOT hallucinate.
+      - Infer top competitors logically based on the company's industry, products, and geography, supplemented by the search context. Rank them by relevance.
+      - Generate exactly 3 highly insightful, industry-specific pain points.
     `;
 
-    // 5. Generate AI Analysis
+    // 6. Generate AI Analysis
     const result = await analyzeCompanyData(prompt, model);
 
     // Ensure we fall back to the identified website if the AI misses it
-    if (!result.website) {
+    if (!result.website || result.website === 'Information unavailable') {
       result.website = targetUrl;
     }
+
+    // Update Cache (Manage size to prevent memory leaks)
+    if (cache.size > 100) {
+      const firstKey = cache.keys().next().value;
+      cache.delete(firstKey);
+    }
+    cache.set(cacheKey, result);
 
     return NextResponse.json(result);
 
   } catch (error) {
     console.error('Research API Error:', error);
-    return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json({ error: 'An unexpected error occurred during research.' }, { status: 500 });
   }
 }
