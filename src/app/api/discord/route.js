@@ -17,12 +17,11 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Discord config missing' }, { status: 400 });
     }
 
-    // Convert file Blob to ArrayBuffer then to Buffer
+    // Convert file Blob to Buffer
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
+    const fileName = `${(companyName || 'company').replace(/\s+/g, '_')}_Report.pdf`;
 
-    // Prepare Discord message payload
-    const discordPayload = new FormData();
     const messageContent = `**New Company Research Report Generated!**\n\n` +
       `**Applicant Details:**\n` +
       `- Name: ${applicantName || 'Not Provided'}\n` +
@@ -30,33 +29,35 @@ export async function POST(request) {
       `**Research Details:**\n` +
       `- Company: ${companyName}\n` +
       `- Website: ${website}\n\n` +
-      `Please find the generated PDF report attached.`;
+      `Please find the generated PDF report attached below.`;
 
-    discordPayload.append('content', messageContent);
-    discordPayload.append('file', new Blob([buffer], { type: 'application/pdf' }), `${companyName.replace(/\s+/g, '_')}_Report.pdf`);
+    // Official Discord API v10 Multipart Format
+    const discordPayload = new FormData();
+    discordPayload.append('payload_json', JSON.stringify({
+      content: messageContent
+    }));
 
-    // We can use a Discord Webhook OR Bot API.
-    // The requirement says "Discord Bot Token" and "Discord Channel ID".
-    // Discord Bot API endpoint: POST /channels/{channel.id}/messages
-    
-    const discordResponse = await fetch(`https://discord.com/api/v10/channels/${channelId}/messages`, {
+    const pdfFile = new File([buffer], fileName, { type: 'application/pdf' });
+    discordPayload.append('files[0]', pdfFile);
+
+    const discordResponse = await fetch(`https://discord.com/api/v10/channels/${channelId.trim()}/messages`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bot ${token}`
+        'Authorization': `Bot ${token.trim()}`
       },
-      body: discordPayload // FormData automatically sets correct multipart boundaries
+      body: discordPayload
     });
 
     if (!discordResponse.ok) {
       const errText = await discordResponse.text();
-      console.error('Discord API Error:', errText);
-      return NextResponse.json({ error: 'Failed to send to Discord' }, { status: discordResponse.status });
+      console.error('Discord API Error Response:', errText);
+      return NextResponse.json({ error: `Discord API Error: ${discordResponse.status}` }, { status: discordResponse.status });
     }
 
     return NextResponse.json({ success: true });
 
   } catch (error) {
-    console.error('Discord API Error:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    console.error('Discord API Internal Error:', error);
+    return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 });
   }
 }
