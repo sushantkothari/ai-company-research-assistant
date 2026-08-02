@@ -65,11 +65,7 @@ export async function POST(request) {
       if (!foundValidUrl) {
         // Smart fallback if Serper key is missing or no valid search results returned
         const cleanName = query.toLowerCase().replace(/[^a-z0-9]/g, '');
-        if (cleanName.includes('relu')) {
-          targetUrl = 'https://reluconsultancy.in';
-        } else {
-          targetUrl = `https://${cleanName}.com`;
-        }
+        targetUrl = `https://${cleanName}.com`;
       }
     } else {
       // Ensure scheme exists for direct URLs
