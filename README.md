@@ -1,33 +1,27 @@
-# AI-Powered Company Research Assistant
+# Relu Consultancy - Company Research Assistant
 
-A fully automated, end-to-end web application that researches a company based on its name or website URL. Built for the Relu Consultancy Hackathon.
+A full-stack web application built for the Relu Consultancy Hackathon that automates company research. By providing a company name or website URL, the application crawls the web, extracts structured data using LLMs, and generates a downloadable PDF report.
 
-## 🚀 TOP 1% Pro Features Implemented
-This project goes far beyond the basic requirements to deliver a production-grade, highly resilient product:
-- **Parallel Deep Crawling**: Uses `Promise.allSettled` to crawl multiple core pages concurrently, slicing scrape times by up to 70% while enforcing timeouts and resilience.
-- **Duplicate Content Detection**: Hashes scraped text to ensure identical pages (e.g. redirects) don't bloat the LLM context window.
-- **Strict JSON Enforcement & Prompt Optimization**: The AI prompt mandates strict JSON schema adherence and is extremely token-efficient.
-- **AI Confidence Scoring & Source Tracking**: AI now rates its own data confidence (0-100%) and explicitly lists all data sources used.
-- **Beautiful UX & Skeleton Loaders**: Features animated skeleton loaders while processing, toast notifications, smooth fade-ins, and a custom CSS glassmorphism UI.
-- **Dynamic Imports**: `html2pdf.js` is lazy-loaded asynchronously, ensuring Next.js SSR build times are lightning fast and the bundle size stays minimal.
+## Features
+- **Concurrent Web Crawling**: Extracts text from multiple core pages of a company website concurrently to minimize processing time.
+- **Deduplication**: Hashes scraped content to prevent duplicate text from bloating the LLM context window.
+- **Structured Data Extraction**: Uses OpenRouter LLMs with strict JSON schema enforcement to parse the company summary, products, pain points, and competitors.
+- **Search Integration**: Leverages Serper.dev to find official company websites and gather context from Google Search.
+- **PDF Export**: Generates styled, downloadable PDF reports directly from the browser using html2pdf.js.
+- **Discord Bot Integration**: Allows users to automatically post the generated PDF report and applicant details to a specified Discord channel via the Discord API v10.
 
-## Core Features
-- **Serper.dev Search Integration**: Finds official websites, competitors, and enriches data context.
-- **OpenRouter AI Integration**: Uses advanced LLMs (like GPT-4o-mini or Llama 3) to analyze the scraped data.
-- **Professional PDF Generation**: Downloads a perfectly formatted, clean PDF report with a single click.
-- **Discord Bot Integration**: Automatically sends the generated PDF and applicant details to a configured Discord channel.
-
-## Technology Stack
+## Tech Stack
 - **Framework**: Next.js (App Router)
-- **Styling**: Vanilla CSS with CSS Modules
-- **Scraping**: Axios & Cheerio
+- **Styling**: Vanilla CSS (CSS Modules)
+- **Web Scraping**: Axios, Cheerio
 - **PDF Generation**: html2pdf.js
 - **Icons**: Lucide React
 
-## Setup Instructions
+## Setup & Installation
 
-1. **Clone the repository** (if from Git) or navigate to the directory:
+1. **Clone the repository**:
    ```bash
+   git clone <repository-url>
    cd ai-company-researcher
    ```
 
@@ -35,14 +29,13 @@ This project goes far beyond the basic requirements to deliver a production-grad
    ```bash
    npm install
    ```
-   *(Note: This project relies STRICTLY on local `package.json` dependencies. No global packages required).*
 
 3. **Configure Environment Variables**:
-   Copy the `.env.example` file to `.env.local`:
+   Copy `.env.example` to `.env.local`:
    ```bash
    cp .env.example .env.local
    ```
-   And add your keys:
+   Add your API keys to `.env.local`:
    ```env
    OPENROUTER_API_KEY="your_openrouter_api_key"
    SERPER_API_KEY="your_serper_api_key"
@@ -54,9 +47,13 @@ This project goes far beyond the basic requirements to deliver a production-grad
    ```
    Open [http://localhost:3000](http://localhost:3000) in your browser.
 
+## Testing Discord Integration
+To test the Discord bot integration:
+1. Generate a Discord Bot Token from the Discord Developer Portal and invite the bot to your server.
+2. Copy the Channel ID where you want the bot to post.
+3. In the web application, click the **Settings** icon (top right).
+4. Enter your applicant details, Discord Bot Token, and Channel ID.
+5. Generate a report and click **Send to Discord**.
+
 ## Deployment
-This project is ready to be deployed on **Vercel** or **Netlify** with zero additional configuration. 
-1. Push to GitHub.
-2. Import project into Vercel/Netlify.
-3. Add `OPENROUTER_API_KEY` and `SERPER_API_KEY` to the production environment variables.
-4. Deploy!
+The application is optimized for Vercel. Connect your GitHub repository to Vercel and add `OPENROUTER_API_KEY` and `SERPER_API_KEY` to the Vercel Environment Variables before deploying.
