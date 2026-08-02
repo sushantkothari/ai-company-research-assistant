@@ -17,10 +17,25 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Discord config missing' }, { status: 400 });
     }
 
+    // Clean token and channelId
+    let cleanToken = String(token).trim().replace(/^["']|["']$/g, '');
+    if (cleanToken.startsWith('Bot ')) {
+      cleanToken = cleanToken.slice(4).trim();
+    }
+    const cleanChannelId = String(channelId).trim().replace(/^["']|["']$/g, '');
+
     // Convert file Blob to Buffer
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
-    const fileName = `${(companyName || 'company').replace(/\s+/g, '_')}_Report.pdf`;
+
+    // Sanitize filename to strict ASCII to prevent ByteString HTTP Header errors
+    const safeCompanyName = String(companyName || 'company')
+      .replace(/[^\x00-\x7F]/g, '') // remove non-ASCII
+      .replace(/[^\w\s-]/g, '')     // remove special chars
+      .trim()
+      .replace(/\s+/g, '_') || 'Company';
+
+    const fileName = `${safeCompanyName}_Report.pdf`;
 
     const messageContent = `**New Company Research Report Generated!**\n\n` +
       `**Applicant Details:**\n` +
@@ -40,10 +55,10 @@ export async function POST(request) {
     const pdfFile = new File([buffer], fileName, { type: 'application/pdf' });
     discordPayload.append('files[0]', pdfFile);
 
-    const discordResponse = await fetch(`https://discord.com/api/v10/channels/${channelId.trim()}/messages`, {
+    const discordResponse = await fetch(`https://discord.com/api/v10/channels/${cleanChannelId}/messages`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bot ${token.trim()}`
+        'Authorization': `Bot ${cleanToken}`
       },
       body: discordPayload
     });
@@ -51,7 +66,11 @@ export async function POST(request) {
     if (!discordResponse.ok) {
       const errText = await discordResponse.text();
       console.error('Discord API Error Response:', errText);
-      return NextResponse.json({ error: `Discord API Error: ${discordResponse.status}` }, { status: discordResponse.status });
+      return NextResponse.json({ 
+        error: discordResponse.status === 401 
+          ? 'Invalid Discord Bot Token. Please check your Bot Token in Settings.' 
+          : `Discord API Error: ${discordResponse.status}` 
+      }, { status: discordResponse.status });
     }
 
     return NextResponse.json({ success: true });
