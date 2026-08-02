@@ -164,7 +164,8 @@ export default function MainUI() {
       if (response.ok) {
         setDiscordSuccess(true);
       } else {
-        throw new Error('Discord API rejected request');
+        const errJson = await response.json().catch(() => ({}));
+        throw new Error(errJson.error || 'Discord API rejected request. Please check that your Bot Token and Channel ID are correct in the sidebar settings.');
       }
     } catch (e) {
       console.error(e);
