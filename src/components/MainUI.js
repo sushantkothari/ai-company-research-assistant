@@ -31,6 +31,7 @@ export default function MainUI() {
   const [isSendingDiscord, setIsSendingDiscord] = useState(false);
   const [discordSuccess, setDiscordSuccess] = useState(false);
   const [savedConfigToast, setSavedConfigToast] = useState(false);
+  const [loadingStep, setLoadingStep] = useState(0);
 
   const handleNewResearch = () => {
     setStatus('idle');
@@ -50,9 +51,16 @@ export default function MainUI() {
     if (!q.trim()) return;
     
     setStatus('loading');
+    setLoadingStep(0);
     setResult(null);
     setErrorMsg('');
     setDiscordSuccess(false);
+
+    let step = 0;
+    const interval = setInterval(() => {
+      step++;
+      if (step <= 4) setLoadingStep(step);
+    }, 2000);
 
     try {
       const response = await fetch('/api/research', {
@@ -66,6 +74,8 @@ export default function MainUI() {
         })
       });
 
+      clearInterval(interval);
+
       if (!response.ok) {
         const errData = await response.json();
         throw new Error(errData.error || 'Failed to complete research');
@@ -75,6 +85,7 @@ export default function MainUI() {
       setResult(data);
       setStatus('complete');
     } catch (err) {
+      clearInterval(interval);
       console.error(err);
       setErrorMsg(err.message);
       setStatus('error');
@@ -99,9 +110,15 @@ export default function MainUI() {
       return;
     }
     
+    const safeName = String(result?.companyName || 'Company')
+      .replace(/[^\x00-\x7F]/g, '')
+      .replace(/[^\w\s-]/g, '')
+      .trim()
+      .replace(/\s+/g, '_');
+
     const opt = {
       margin:       0,
-      filename:     `${result?.companyName?.replace(/\s+/g, '_') || 'company'}_report.pdf`,
+      filename:     `${safeName}_Report.pdf`,
       image:        { type: 'jpeg', quality: 1 },
       html2canvas:  { scale: 2, useCORS: true, windowWidth: 850, backgroundColor: '#ffffff' },
       jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
@@ -382,8 +399,34 @@ export default function MainUI() {
 
           {status === 'loading' && (
             <div className={styles.loadingContainer}>
-              <div className={styles.spinner}></div>
-              <p className={styles.loadingText}>Analyzing company data via AI agents...</p>
+              <div className={styles.loadingBox}>
+                <div className={styles.loadingTitle}>RESEARCHING &bull; {input.toLowerCase()}</div>
+                
+                <div className={styles.loadingStepItem}>
+                  {loadingStep > 0 ? <span className={styles.stepIconDone}>✓</span> : <span className={styles.stepIconSpinner}></span>}
+                  <span className={loadingStep >= 0 ? styles.stepTextActive : styles.stepTextPending}>Searching Serper.dev for official website</span>
+                </div>
+                
+                <div className={styles.loadingStepItem}>
+                  {loadingStep > 1 ? <span className={styles.stepIconDone}>✓</span> : loadingStep === 1 ? <span className={styles.stepIconSpinner}></span> : <span className={styles.stepIconPending}>2</span>}
+                  <span className={loadingStep >= 1 ? styles.stepTextActive : styles.stepTextPending}>Crawling key pages — home, about, products, pricing</span>
+                </div>
+                
+                <div className={styles.loadingStepItem}>
+                  {loadingStep > 2 ? <span className={styles.stepIconDone}>✓</span> : loadingStep === 2 ? <span className={styles.stepIconSpinner}></span> : <span className={styles.stepIconPending}>3</span>}
+                  <span className={loadingStep >= 2 ? styles.stepTextActive : styles.stepTextPending}>Cross-referencing public sources</span>
+                </div>
+                
+                <div className={styles.loadingStepItem}>
+                  {loadingStep > 3 ? <span className={styles.stepIconDone}>✓</span> : loadingStep === 3 ? <span className={styles.stepIconSpinner}></span> : <span className={styles.stepIconPending}>4</span>}
+                  <span className={loadingStep >= 3 ? styles.stepTextActive : styles.stepTextPending}>Sending extracted content to OpenRouter</span>
+                </div>
+                
+                <div className={styles.loadingStepItem}>
+                  {loadingStep > 4 ? <span className={styles.stepIconDone}>✓</span> : loadingStep === 4 ? <span className={styles.stepIconSpinner}></span> : <span className={styles.stepIconPending}>5</span>}
+                  <span className={loadingStep >= 4 ? styles.stepTextActive : styles.stepTextPending}>Generating AI insights & identifying competitors</span>
+                </div>
+              </div>
             </div>
           )}
 
@@ -481,11 +524,11 @@ export default function MainUI() {
           <div className={styles.searchHint}>ENTER TO RESEARCH &bull; SHIFT+ENTER FOR NEW LINE</div>
         </form>
 
-        {/* PDF Template matching Image 3 precisely */}
+        {/* PDF Template matching Image exactly */}
         {status === 'complete' && result && (
           <div id="pdf-export-template" className={styles.pdfTemplate}>
             <div className={styles.pdfHeader}>
-              <div className={styles.pdfSubTitle}>AI COMPANY RESEARCH REPORT</div>
+              <div className={styles.pdfSubTitle}>RELU CONSULTANCY &middot; COMPANY RESEARCH REPORT</div>
               <h1 className={styles.pdfMainTitle}>{result.companyName}</h1>
             </div>
             
@@ -495,7 +538,7 @@ export default function MainUI() {
                 <tbody>
                   <tr>
                     <td className={styles.pdfTableLabel}>Website</td>
-                    <td className={styles.pdfTableValue}>{result.website}</td>
+                    <td className={styles.pdfTableValue}><a href={result.website}>{result.website}</a></td>
                   </tr>
                   <tr>
                     <td className={styles.pdfTableLabel}>Phone</td>
@@ -503,15 +546,12 @@ export default function MainUI() {
                   </tr>
                   <tr>
                     <td className={styles.pdfTableLabel}>Address</td>
-                    <td className={styles.pdfTableValue}>{result.address || 'Information unavailable'}</td>
+                    <td className={styles.pdfTableValue}>{result.address || 'Not publicly listed'}</td>
                   </tr>
                 </tbody>
               </table>
 
-              <h2 className={styles.pdfSectionTitle}>EXECUTIVE SUMMARY</h2>
-              <p className={styles.pdfSummary}>{result.summary}</p>
-
-              <h2 className={styles.pdfSectionTitle}>PRODUCTS & SERVICES</h2>
+              <h2 className={styles.pdfSectionTitle}>PRODUCTS &amp; SERVICES</h2>
               <ul className={styles.pdfBullets}>
                 {result.products?.map((item, i) => <li key={i}>{item}</li>)}
               </ul>
@@ -522,16 +562,19 @@ export default function MainUI() {
               </ul>
 
               <h2 className={styles.pdfSectionTitle}>COMPETITORS</h2>
-              <div className={styles.pdfCompetitorsGrid}>
-                {result.competitors?.map((comp, i) => (
-                  <div key={i} className={styles.pdfCompRow}>
-                    <div className={styles.pdfCompHeader}>
-                      <div className={styles.pdfCompName}>{comp.name}</div>
-                      <div className={styles.pdfCompUrl}>{comp.website}</div>
-                    </div>
-                    <div className={styles.pdfCompReason}>{comp.reason}</div>
-                  </div>
-                ))}
+              <table className={styles.pdfCompTable}>
+                <tbody>
+                  {result.competitors?.map((comp, i) => (
+                    <tr key={i}>
+                      <td className={styles.pdfCompNameCol}>{comp.name}</td>
+                      <td className={styles.pdfCompUrlCol}>{comp.website}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              
+              <div className={styles.pdfFooter}>
+                Generated by Relu Consultancy &middot; {new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })}
               </div>
             </div>
           </div>

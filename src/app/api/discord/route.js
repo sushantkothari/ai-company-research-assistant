@@ -49,9 +49,8 @@ export async function POST(request) {
 
     // Official Discord API v10 Multipart Format
     const discordPayload = new FormData();
-    discordPayload.append('payload_json', JSON.stringify({
-      content: messageContent
-    }));
+    const jsonBlob = new Blob([JSON.stringify({ content: messageContent })], { type: 'application/json' });
+    discordPayload.append('payload_json', jsonBlob);
 
     const pdfFile = new File([buffer], fileName, { type: 'application/pdf' });
     discordPayload.append('files[0]', pdfFile);
