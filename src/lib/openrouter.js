@@ -97,6 +97,26 @@ async function getDemoResponse(prompt) {
   const isRelu = /relu/i.test(prompt);
   const isTesla = /tesla/i.test(prompt);
   const isStripe = /stripe/i.test(prompt);
+  const isAurora = /aurora/i.test(prompt);
+
+  if (isAurora) {
+    return {
+      companyName: "Aurora Labs",
+      website: "https://aurora.dev",
+      phone: "Information unavailable",
+      address: "Information unavailable",
+      summary: "Aurora Labs provides the Aurora platform, which is an EVM (Ethereum Virtual Machine) scaling solution built on the NEAR Protocol. It enables developers to build Ethereum-compatible applications on a high-throughput, low-cost blockchain architecture.",
+      products: ["EVM scaling on NEAR", "Cross-chain interoperability", "Aurora Cloud"],
+      painPoints: ["Ethereum high gas fees", "Cross-chain fragmentation", "Web3 onboarding friction"],
+      competitors: [
+        { "name": "Polygon", "website": "https://polygon.technology", "reason": "Offers competing Layer 2 scaling solutions for Ethereum." },
+        { "name": "Arbitrum", "website": "https://arbitrum.io", "reason": "A leading Optimistic Rollup solution for Ethereum scaling." },
+        { "name": "Optimism", "website": "https://optimism.io", "reason": "Major provider of Ethereum Layer 2 infrastructure." }
+      ],
+      confidenceScore: 95,
+      sourcesUsed: ["https://aurora.dev", "Google Search / SERP Index"]
+    };
+  }
 
   if (isTesla) {
     return {

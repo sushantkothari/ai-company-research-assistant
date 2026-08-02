@@ -110,7 +110,7 @@ export default function MainUI() {
       return;
     }
     
-    const companyNameTarget = (result?.companyName && result.companyName !== 'Unknown' && result.companyName !== 'Company') ? result.companyName : input;
+    const companyNameTarget = (result?.companyName && result.companyName !== 'Unknown' && result.companyName !== 'Company' && result.companyName !== 'Sample Enterprise') ? result.companyName : input;
     const safeName = String(companyNameTarget || 'Company')
       .replace(/[^\x00-\x7F]/g, '')
       .replace(/[^\w\s-]/g, '')
