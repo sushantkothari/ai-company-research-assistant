@@ -1,4 +1,4 @@
-# 🌐 ReluAI Researcher — Autonomous Company Intelligence Platform
+# ReluAI Researcher — Autonomous Company Intelligence Platform
 
 [![Next.js](https://img.shields.io/badge/Next.js-16.2-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19.0-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://reactjs.org/)
@@ -11,7 +11,7 @@ It automates deep company research by converting a company name or website URL i
 
 ---
 
-## 📌 Executive Summary
+## Executive Summary
 
 Manual company research is slow and repetitive. Analysts spend hours navigating company websites, reading product descriptions, searching for contact details, and identifying market competitors.
 
@@ -24,56 +24,44 @@ Manual company research is slow and repetitive. Analysts spend hours navigating 
 
 ---
 
-## 🏛 System Architecture & Data Pipeline
+## System Architecture & Data Pipeline
 
 The diagram below details the end-to-end data flow across system components:
 
 ```mermaid
-flowchart TD
-    %% Styling definitions
-    classDef userFill fill:#2563eb,stroke:#1d4ed8,color:#fff,stroke-width:2px;
-    classDef processFill fill:#1e293b,stroke:#475569,color:#fff,stroke-width:1px;
-    classDef aiFill fill:#7c3aed,stroke:#6d28d9,color:#fff,stroke-width:2px;
-    classDef outputFill fill:#059669,stroke:#047857,color:#fff,stroke-width:2px;
-    classDef cacheFill fill:#d97706,stroke:#b45309,color:#fff,stroke-width:1px;
-
-    %% User Interaction
-    subgraph Phase1["Phase 1: Input & Resolution"]
-        U["User Query (Name or URL)"] ::: userFill
-        CACHE{"In-Memory Cache Hit?"} ::: cacheFill
-        SERPER["Serper Search API"] ::: processFill
-        FILTER["Domain Heuristic Filter<br/>(Exclude Wikipedia, LinkedIn, etc.)"] ::: processFill
-        TARGET["Official Website URL"] ::: processFill
+graph TD
+    subgraph Phase 1: Input and Resolution
+        U[User Query: Name or URL]
+        CACHE{In-Memory Cache Hit?}
+        SERPER[Serper Search API]
+        FILTER[Domain Heuristic Filter]
+        TARGET[Official Website URL]
     end
 
-    %% Web Crawling & Parsing
-    subgraph Phase2["Phase 2: Parallel Web Scraping"]
-        DISCOVER["Priority Page Discovery<br/>(/about, /products, /pricing, etc.)"] ::: processFill
-        CRAWL["Parallel Scraper Engine<br/>(Axios + Cheerio)"] ::: processFill
-        RETRY["Exponential Retry Handler"] ::: processFill
-        HASH["String-Hashing Content Deduplicator"] ::: processFill
-        CLEANED["Cleaned Unstructured Context"] ::: processFill
+    subgraph Phase 2: Parallel Web Scraping
+        DISCOVER[Priority Page Discovery]
+        CRAWL[Parallel Scraper Engine]
+        RETRY[Exponential Retry Handler]
+        HASH[String-Hashing Content Deduplicator]
+        CLEANED[Cleaned Unstructured Context]
     end
 
-    %% AI Synthesis
-    subgraph Phase3["Phase 3: Structured AI Inference"]
-        OPENROUTER["OpenRouter API<br/>(Llama 3.3 70B / GPT-4o)"] ::: aiFill
-        PROMPT["Strict JSON Schema Prompting"] ::: aiFill
-        PARSER["JSON Validator & Fallback Engine"] ::: aiFill
-        REPORT["Structured Research JSON"] ::: outputFill
+    subgraph Phase 3: Structured AI Inference
+        OPENROUTER[OpenRouter API]
+        PROMPT[Strict JSON Schema Prompting]
+        PARSER[JSON Validator Engine]
+        REPORT[Structured Research JSON]
     end
 
-    %% Delivery Channels
-    subgraph Phase4["Phase 4: Multi-Channel Output"]
-        UI["Glassmorphism Web Dashboard"] ::: outputFill
-        PDF["Dynamic PDF Generator<br/>(Off-Screen Letter Template)"] ::: outputFill
-        DISCORD["Discord API v10 Bot<br/>(Multipart Form Upload)"] ::: outputFill
+    subgraph Phase 4: Multi-Channel Output
+        UI[Glassmorphism Web Dashboard]
+        PDF[Dynamic PDF Generator]
+        DISCORD[Discord Bot API v10]
     end
 
-    %% Pipeline Connections
     U --> CACHE
-    CACHE -- "Yes (Instant Return)" --> UI
-    CACHE -- "No" --> SERPER
+    CACHE -- Yes --> UI
+    CACHE -- No --> SERPER
     SERPER --> FILTER
     FILTER --> TARGET
     TARGET --> DISCOVER
@@ -92,7 +80,7 @@ flowchart TD
 
 ---
 
-## ⚡ Key Engineering Features
+## Key Engineering Features
 
 | Feature | Technical Implementation | Value Delivered |
 | :--- | :--- | :--- |
@@ -106,7 +94,7 @@ flowchart TD
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 * **Frontend Framework**: Next.js 16.2 (App Router, Turbopack)
 * **UI Architecture**: React 19, Vanilla CSS Modules (Glassmorphism design system)
@@ -119,7 +107,7 @@ flowchart TD
 
 ---
 
-## 📁 Repository Structure
+## Repository Structure
 
 ```
 ai-company-researcher/
@@ -149,7 +137,7 @@ ai-company-researcher/
 
 ---
 
-## 🚀 Setup & Installation Guide
+## Setup & Installation Guide
 
 Follow these simple steps to run the project locally on your machine.
 
@@ -212,11 +200,11 @@ Open your browser and navigate to **`http://localhost:3000`**.
 
 ---
 
-## ⚙️ Configuration & Discord Setup (Optional)
+## Configuration & Discord Setup (Optional)
 
 You can customize AI models and Discord integrations directly inside the UI:
 
-1. Click the **Settings Gear Icon** ⚙️ in the top right corner of the application.
+1. Click the **Settings Gear Icon** in the top right corner of the application.
 2. Select your desired AI model (e.g., Llama 3.3 70B, Gemini 2.0 Flash, GPT-4o Mini).
 3. Fill in your **Applicant Name** and **Email**.
 4. To enable automatic Discord reports:
@@ -226,7 +214,7 @@ You can customize AI models and Discord integrations directly inside the UI:
 
 ---
 
-## 🧠 Architectural Decisions & Trade-offs
+## Architectural Decisions & Trade-offs
 
 ### 1. Static Parsing (Cheerio) vs. Headless Browsers (Puppeteer)
 * **Decision**: We selected Cheerio paired with HTTP fetch requests over Puppeteer/Playwright.
@@ -239,7 +227,7 @@ You can customize AI models and Discord integrations directly inside the UI:
 
 ---
 
-## 🔒 Security & Reliability Controls
+## Security & Reliability Controls
 
 * **SSRF Protection**: All user inputs undergo URL parsing and validation before HTTP request initiation.
 * **Buffer Sanitization**: To prevent Discord API rejection due to invalid UTF-8 strings, applicant details and file headers are stripped of non-ASCII characters (`/[^\x00-\x7F]/g`).
@@ -247,6 +235,6 @@ You can customize AI models and Discord integrations directly inside the UI:
 
 ---
 
-## 📄 License
+## License
 
 Distributed under the **MIT License**. See `LICENSE` for more information.
