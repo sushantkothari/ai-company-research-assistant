@@ -25,7 +25,7 @@ function isBlockedDomain(urlStr) {
 export async function POST(request) {
   try {
     const body = await request.json();
-    let { query, model } = body;
+    let { query, model, openRouterKey, serperKey } = body;
 
     // 1. Input Sanitization & Validation
     if (!query || typeof query !== 'string') {
@@ -48,7 +48,7 @@ export async function POST(request) {
 
     if (!isUrl) {
       // Find official website using Serper
-      const searchRes = await searchGoogle(`${query} official website`);
+      const searchRes = await searchGoogle(`${query} official website`, serperKey);
       searchData = searchRes;
       
       let foundValidUrl = false;
@@ -94,7 +94,7 @@ export async function POST(request) {
          domainForSearch = new URL(targetUrl).hostname.replace('www.', '');
       } catch (e) {}
     }
-    const compRes = await searchGoogle(`${domainForSearch} top competitors alternatives software industry`);
+    const compRes = await searchGoogle(`${domainForSearch} top competitors alternatives software industry`, serperKey);
     if (compRes && Array.isArray(compRes.organic)) {
       competitorSearchContext = compRes.organic.slice(0, 5).map(r => `${r.title}: ${r.link}`).join('\n');
     }
@@ -121,7 +121,7 @@ export async function POST(request) {
     `;
 
     // 6. Generate AI Analysis
-    const result = await analyzeCompanyData(prompt, model);
+    const result = await analyzeCompanyData(prompt, model, openRouterKey);
 
     // Ensure we fall back to the identified website if the AI misses it
     if (!result.website || result.website === 'Information unavailable') {

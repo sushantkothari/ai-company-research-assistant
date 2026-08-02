@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-export async function searchGoogle(query) {
-  const apiKey = process.env.SERPER_API_KEY ? process.env.SERPER_API_KEY.trim() : '';
+export async function searchGoogle(query, clientApiKey = '') {
+  const apiKey = (clientApiKey || process.env.SERPER_API_KEY || '').trim();
   if (!apiKey) {
     console.warn('SERPER_API_KEY is not set. Skipping search.');
     return null;

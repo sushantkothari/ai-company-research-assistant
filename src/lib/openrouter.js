@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-export async function analyzeCompanyData(prompt, model = 'openai/gpt-4o-mini') {
-  const apiKey = process.env.OPENROUTER_API_KEY ? process.env.OPENROUTER_API_KEY.trim() : '';
+export async function analyzeCompanyData(prompt, model = 'openai/gpt-4o-mini', clientApiKey = '') {
+  const apiKey = (clientApiKey || process.env.OPENROUTER_API_KEY || '').trim();
   
   if (!apiKey) {
     console.warn('OPENROUTER_API_KEY is empty. Using realistic Demo/Mock Mode response.');

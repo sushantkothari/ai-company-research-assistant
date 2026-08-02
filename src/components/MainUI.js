@@ -2,51 +2,54 @@
 
 import React, { useState } from 'react';
 import styles from './MainUI.module.css';
-import { Search, Settings, Building2, Globe, Phone, MapPin, Target, Crosshair, Download, Send, Copy, CheckCircle2, AlertTriangle, ShieldCheck, Link as LinkIcon } from 'lucide-react';
-import SettingsModal from './SettingsModal';
 import { useSettings } from '@/context/SettingsContext';
 
+const MODELS = [
+  { id: 'meta-llama/llama-3.3-70b-instruct:free', name: 'Llama 3.3 70B (FREE)' },
+  { id: 'google/gemini-2.0-flash-exp:free', name: 'Gemini 2.0 Flash (FREE)' },
+  { id: 'deepseek/deepseek-r1:free', name: 'DeepSeek R1 (FREE)' },
+  { id: 'openai/gpt-4o-mini', name: 'GPT-4o Mini (Paid)' },
+  { id: 'openai/gpt-4o', name: 'GPT-4o (Paid)' },
+  { id: 'anthropic/claude-3.5-sonnet', name: 'Claude 3.5 Sonnet' }
+];
+
 export default function MainUI() {
-  const { settings } = useSettings();
+  const { settings, updateSetting } = useSettings();
+  const [activeTab, setActiveTab] = useState('API');
   const [input, setInput] = useState('');
-  const [status, setStatus] = useState('idle'); // idle, searching, crawling, analyzing, complete, error
-  const [progressLog, setProgressLog] = useState([]);
+  const [status, setStatus] = useState('idle'); // idle, loading, complete, error
   const [result, setResult] = useState(null);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [isDownloading, setIsDownloading] = useState(false);
-  const [copied, setCopied] = useState(false);
-  const [toast, setToast] = useState('');
   const [isSendingDiscord, setIsSendingDiscord] = useState(false);
+  const [discordSuccess, setDiscordSuccess] = useState(false);
 
-  const showToast = (msg) => {
-    setToast(msg);
-    setTimeout(() => setToast(''), 3000);
-  };
-
-  const addLog = (msg) => {
-    setProgressLog(prev => [...prev, { time: new Date().toLocaleTimeString(), msg }]);
+  const handleNewResearch = () => {
+    setStatus('idle');
+    setResult(null);
+    setInput('');
+    setErrorMsg('');
+    setDiscordSuccess(false);
   };
 
   const handleSearch = async (e) => {
     e.preventDefault();
     if (!input.trim()) return;
     
-    setStatus('crawling');
-    setProgressLog([]);
+    setStatus('loading');
     setResult(null);
     setErrorMsg('');
+    setDiscordSuccess(false);
 
-    addLog(`Initiating deep research for: ${input}`);
-    addLog('Resolving target and querying Google Search...');
-    
     try {
       const response = await fetch('/api/research', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           query: input,
-          model: settings.model
+          model: settings.model,
+          openRouterKey: settings.openRouterKey,
+          serperKey: settings.serperKey
         })
       });
 
@@ -55,29 +58,13 @@ export default function MainUI() {
         throw new Error(errData.error || 'Failed to complete research');
       }
 
-      addLog('Extracting insights and formatting report via OpenRouter...');
-      setStatus('analyzing');
-      
       const data = await response.json();
       setResult(data);
-      addLog('Research complete.');
       setStatus('complete');
-      
-      if (settings.discordToken && settings.discordChannel) {
-        // Wait 800ms for DOM report-content to fully render before sending
-        setTimeout(() => {
-          sendToDiscord(data);
-        }, 800);
-      } else {
-        showToast('Report generated successfully!');
-      }
-
     } catch (err) {
       console.error(err);
       setErrorMsg(err.message);
       setStatus('error');
-      addLog(`Error: ${err.message}`);
-      showToast('Error generating report.');
     }
   };
 
@@ -90,7 +77,7 @@ export default function MainUI() {
     }
     
     const opt = {
-      margin:       0.3,
+      margin:       0,
       filename:     `${result?.companyName?.replace(/\s+/g, '_') || 'company'}_report.pdf`,
       image:        { type: 'jpeg', quality: 1 },
       html2canvas:  { scale: 2, useCORS: true, windowWidth: 850, backgroundColor: '#ffffff' },
@@ -100,40 +87,27 @@ export default function MainUI() {
     try {
       const html2pdf = (await import('html2pdf.js')).default;
       await html2pdf().set(opt).from(element).save();
-      showToast('PDF Downloaded');
     } catch (e) {
       console.error(e);
-      showToast('PDF generation failed.');
+      alert('PDF generation failed.');
     }
     setIsDownloading(false);
   };
 
-  const copyJson = () => {
-    navigator.clipboard.writeText(JSON.stringify(result, null, 2));
-    setCopied(true);
-    showToast('JSON copied to clipboard!');
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  const sendToDiscord = async (dataToUse) => {
-    const data = dataToUse || result;
-    if (!data) return;
-
+  const sendToDiscord = async () => {
+    if (!result) return;
     if (!settings.discordToken || !settings.discordChannel) {
-      showToast('Please add Discord Token & Channel ID in Settings!');
+      alert('Please add Discord Token & Channel ID in Settings!');
       return;
     }
 
     setIsSendingDiscord(true);
-    addLog('Preparing to send report to Discord...');
     try {
       const element = document.getElementById('pdf-export-template');
-      if (!element) {
-        throw new Error('Report layout not ready yet');
-      }
+      if (!element) throw new Error('Report layout not ready');
 
       const opt = {
-        margin:       0.3,
+        margin:       0,
         filename:     `report.pdf`,
         image:        { type: 'jpeg', quality: 1 },
         html2canvas:  { scale: 2, useCORS: true, windowWidth: 850, backgroundColor: '#ffffff' },
@@ -146,8 +120,8 @@ export default function MainUI() {
       const pdfBlob = new Blob([pdfArrayBuffer], { type: 'application/pdf' });
 
       const jsonPayload = JSON.stringify({
-        companyName: (data.companyName || '').replace(/[^\x00-\x7F]/g, ''),
-        website: data.website || '',
+        companyName: (result.companyName || '').replace(/[^\x00-\x7F]/g, ''),
+        website: result.website || '',
         applicantName: (settings.applicantName || '').replace(/[^\x00-\x7F]/g, ''),
         applicantEmail: settings.applicantEmail || '',
         channelId: settings.discordChannel || '',
@@ -165,273 +139,336 @@ export default function MainUI() {
       });
 
       if (response.ok) {
-        addLog('Successfully sent report to Discord channel!');
-        showToast('Discord upload successful!');
+        setDiscordSuccess(true);
       } else {
-        const errJson = await response.json().catch(() => ({}));
-        throw new Error(errJson.error || 'Discord API rejected request');
+        throw new Error('Discord API rejected request');
       }
     } catch (e) {
       console.error(e);
-      addLog('Error sending to Discord: ' + e.message);
-      showToast('Discord upload failed.');
+      alert('Discord upload failed: ' + e.message);
     }
     setIsSendingDiscord(false);
   };
 
   return (
     <div className={styles.container}>
-      {toast && <div className={styles.toast}>{toast}</div>}
-
-      <header className={styles.header}>
-        <div className={styles.logo}>
-          <Search className={styles.logoIcon} />
-          <h1 className="gradient-text">ReluAI Researcher</h1>
+      <aside className={styles.sidebar}>
+        <div className={styles.sidebarHeader}>
+          <div className={styles.logoRow}>
+            <div className={styles.logoIcon}></div>
+            <div className={styles.logoText}>
+              <div className={styles.reluBrand}>Relu Consultancy</div>
+              <div className={styles.appTitle}>COMPANY INTELLIGENCE</div>
+            </div>
+          </div>
+          <button className={styles.newResearchBtn} onClick={handleNewResearch}>+ New Research</button>
         </div>
-        <button className={styles.iconBtn} onClick={() => setIsSettingsOpen(true)}>
-          <Settings size={20} />
-        </button>
-      </header>
 
-      <main className={styles.mainContent}>
-        {status === 'idle' && (
-          <div className={styles.hero}>
-            <h2>AI-Powered Company Research Assistant</h2>
-            <p>Enter a company name or website URL to generate a comprehensive analysis report.</p>
-          </div>
-        )}
+        <div className={styles.tabsContainer}>
+          <button 
+            className={`${styles.tabBtn} ${activeTab === 'API' ? styles.activeTab : ''}`}
+            onClick={() => setActiveTab('API')}
+          >
+            API
+          </button>
+          <button 
+            className={`${styles.tabBtn} ${activeTab === 'DISCORD' ? styles.activeTab : ''}`}
+            onClick={() => setActiveTab('DISCORD')}
+          >
+            DISCORD
+          </button>
+        </div>
 
-        <form onSubmit={handleSearch} className={styles.searchForm}>
-          <div className={styles.inputWrapper}>
-            <input 
-              type="text" 
-              className={styles.input} 
-              placeholder="e.g. Stripe, Tesla, or https://reluconsultancy.in" 
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              disabled={status !== 'idle' && status !== 'complete' && status !== 'error'}
-              autoFocus
-            />
-            <button 
-              type="submit" 
-              className={styles.submitBtn}
-              disabled={status !== 'idle' && status !== 'complete' && status !== 'error'}
-            >
-              <Send size={18} />
-            </button>
-          </div>
-        </form>
-
-        {(status !== 'idle') && (
-          <div className={`${styles.chatContainer} glass-panel`}>
-            <div className={styles.logs}>
-              {progressLog.map((log, i) => (
-                <div key={i} className={styles.logItem}>
-                  <span className={styles.logTime}>[{log.time}]</span>
-                  <span className={styles.logMsg}>{log.msg}</span>
+        <div className={styles.sidebarContent}>
+          {activeTab === 'API' && (
+            <div className={styles.settingsGroup}>
+              <label className={styles.label}>
+                OPENROUTER API KEY
+                <input 
+                  type="password" 
+                  className={styles.input} 
+                  value={settings.openRouterKey}
+                  onChange={(e) => updateSetting('openRouterKey', e.target.value)}
+                  placeholder="sk-or-v1-..."
+                />
+              </label>
+              
+              <label className={styles.label}>
+                SERPER.DEV API KEY
+                <input 
+                  type="password" 
+                  className={styles.input} 
+                  value={settings.serperKey}
+                  onChange={(e) => updateSetting('serperKey', e.target.value)}
+                  placeholder="Enter Serper key"
+                />
+              </label>
+              
+              <label className={styles.label}>
+                AI MODEL
+                <div className={styles.selectWrapper}>
+                  <select 
+                    className={styles.select}
+                    value={settings.model}
+                    onChange={(e) => updateSetting('model', e.target.value)}
+                  >
+                    {MODELS.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
+                  </select>
                 </div>
-              ))}
-              {status !== 'complete' && status !== 'error' && (
-                <div className={styles.loadingDots}>
-                  <span>.</span><span>.</span><span>.</span>
+              </label>
+
+              <button className={styles.saveConfigBtn}>Save Configuration</button>
+
+              <div className={styles.howItWorks}>
+                <h4>HOW IT WORKS</h4>
+                <ol>
+                  <li><strong>Enter a company name</strong> or URL in the search bar.</li>
+                  <li><strong>The AI agents</strong> will crawl the web, analyzing the company&apos;s official site, news, and directories.</li>
+                  <li><strong>Wait ~20 seconds</strong> while our reasoning engine compiles pain points and competitor analysis.</li>
+                  <li><strong>Download a PDF</strong> or push the report directly to Discord.</li>
+                </ol>
+              </div>
+
+              <div className={styles.poweredBy}>
+                OPENROUTER &bull; SERPER &bull; JSPDF
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'DISCORD' && (
+            <div className={styles.settingsGroup}>
+              <div className={styles.discordHeaderBox}>
+                <h4>Discord Bot Integration</h4>
+                <p>Configure these settings to instantly send PDF reports to your channel.</p>
+              </div>
+              
+              <label className={styles.label}>
+                BOT TOKEN
+                <input 
+                  type="password" 
+                  className={styles.input} 
+                  value={settings.discordToken}
+                  onChange={(e) => updateSetting('discordToken', e.target.value)}
+                  placeholder="Bot token..."
+                />
+              </label>
+              
+              <label className={styles.label}>
+                CHANNEL ID
+                <input 
+                  type="text" 
+                  className={styles.input} 
+                  value={settings.discordChannel}
+                  onChange={(e) => updateSetting('discordChannel', e.target.value)}
+                  placeholder="Channel ID..."
+                />
+              </label>
+
+              <div className={styles.applicantDetails}>
+                <h4>APPLICANT DETAILS</h4>
+                <label className={styles.label}>
+                  Full Name
+                  <input 
+                    type="text" 
+                    className={styles.input} 
+                    value={settings.applicantName}
+                    onChange={(e) => updateSetting('applicantName', e.target.value)}
+                    placeholder="Enter your name"
+                  />
+                </label>
+                <label className={styles.label}>
+                  Email Address
+                  <input 
+                    type="email" 
+                    className={styles.input} 
+                    value={settings.applicantEmail}
+                    onChange={(e) => updateSetting('applicantEmail', e.target.value)}
+                    placeholder="Enter your email"
+                  />
+                </label>
+              </div>
+
+              <button className={styles.savedBtn}>Saved ✓</button>
+            </div>
+          )}
+        </div>
+      </aside>
+
+      <main className={styles.mainArea}>
+        <header className={styles.topBar}>
+          <span className={styles.topBarTitle}>Company Research</span>
+          <span className={styles.liveBadge}>LIVE</span>
+        </header>
+
+        <div className={styles.mainContentBody}>
+          {status === 'idle' && (
+            <div className={styles.heroSection}>
+              <div className={styles.heroTag}>AI-POWERED INTELLIGENCE</div>
+              <h1 className={styles.heroHeading}>Know any company in minutes.</h1>
+              <p className={styles.heroSubtext}>
+                Enter a company name or website URL to get AI-powered insights, competitor analysis, pain points, and a professional PDF report.
+              </p>
+              <div className={styles.badgeRow}>
+                <span className={styles.sampleBadge}>stripe.com</span>
+                <span className={styles.sampleBadge}>Tesla</span>
+                <span className={styles.sampleBadge}>Microsoft</span>
+                <span className={styles.sampleBadge}>OpenAI</span>
+              </div>
+              <div className={styles.heroDivider}>
+                <span>Configure API keys in the sidebar to get started</span>
+              </div>
+            </div>
+          )}
+
+          {status === 'loading' && (
+            <div className={styles.loadingContainer}>
+              <div className={styles.spinner}></div>
+              <p>Analyzing company data...</p>
+            </div>
+          )}
+
+          {status === 'error' && (
+            <div className={styles.errorContainer}>
+              <p>Error: {errorMsg}</p>
+            </div>
+          )}
+
+          {status === 'complete' && result && (
+            <div className={styles.resultCard}>
+              <div className={styles.resultHeader}>
+                <div>
+                  <h2 className={styles.resultTitle}>{result.companyName || 'Unknown'}</h2>
+                  <a href={result.website?.startsWith('http') ? result.website : `https://${result.website}`} target="_blank" rel="noreferrer" className={styles.resultUrl}>
+                    {result.website || 'No website found'}
+                  </a>
                 </div>
-              )}
-            </div>
-
-            {status === 'complete' && result && (
-              <div className={styles.resultActions}>
-                <button onClick={copyJson} className={styles.secondaryBtn}>
-                  {copied ? <CheckCircle2 size={16}/> : <Copy size={16} />} JSON
-                </button>
-                <button onClick={() => sendToDiscord(result)} className={styles.secondaryBtn} disabled={isSendingDiscord}>
-                  <Send size={16} /> {isSendingDiscord ? 'Sending...' : 'Send to Discord'}
-                </button>
-                <button onClick={downloadPDF} className={styles.primaryBtn} disabled={isDownloading}>
-                  {isDownloading ? <span className={styles.spinIcon}><Search size={16}/></span> : <Download size={16} />} 
-                  {isDownloading ? 'Generating...' : 'Download PDF Report'}
-                </button>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Skeleton Loaders */}
-        {(status === 'crawling' || status === 'analyzing') && (
-          <div className={`${styles.reportContainer} glass-panel ${styles.skeletonPulse}`}>
-            <div className={styles.skeletonHeader}></div>
-            <div className={styles.skeletonText}></div>
-            <div className={styles.skeletonText}></div>
-            <div className={styles.skeletonGrid}>
-              <div className={styles.skeletonBox}></div>
-              <div className={styles.skeletonBox}></div>
-            </div>
-          </div>
-        )}
-
-        {/* UI Report Display */}
-        {status === 'complete' && result && (
-          <div id="report-content" className={`${styles.reportContainer} glass-panel`}>
-            
-            <div className={styles.metadataBar}>
-              <div className={styles.confidenceScore}>
-                <ShieldCheck size={16} className={result.confidenceScore > 80 ? styles.colorSuccess : styles.colorWarning} />
-                <span>AI Confidence: <strong>{result.confidenceScore}%</strong></span>
-              </div>
-            </div>
-
-            <div className={styles.reportHeader}>
-              <h2 className="gradient-text">{result.companyName || 'Unknown Company'}</h2>
-              <div className={styles.badges}>
-                {result.website && <a href={result.website.startsWith('http') ? result.website : 'https://'+result.website} target="_blank" rel="noreferrer" className={styles.badge}><Globe size={14}/> {result.website}</a>}
-                {result.phone && <span className={styles.badge}><Phone size={14}/> {result.phone}</span>}
-                {result.address && <span className={styles.badge}><MapPin size={14}/> {result.address}</span>}
-              </div>
-            </div>
-
-            <div className={styles.reportSection}>
-              <h3><Building2 size={18}/> Company Summary</h3>
-              <p>{result.summary}</p>
-            </div>
-
-            <div className={styles.grid2}>
-              <div className={styles.reportSection}>
-                <h3><Target size={18}/> Products & Services</h3>
-                {result.products?.length > 0 ? (
-                  <ul className={styles.list}>
-                    {result.products.map((item, i) => <li key={i}>{item}</li>)}
-                  </ul>
-                ) : <p className={styles.dim}>No products found.</p>}
+                <div className={styles.completeBadge}>RESEARCH COMPLETE</div>
               </div>
 
-              <div className={styles.reportSection}>
-                <h3><Crosshair size={18}/> Pain Points</h3>
-                {result.painPoints?.length > 0 ? (
-                  <ul className={styles.list}>
-                    {result.painPoints.map((item, i) => <li key={i}>{item}</li>)}
-                  </ul>
-                ) : <p className={styles.dim}>No pain points found.</p>}
+              <div className={styles.infoColumns}>
+                <div className={styles.infoCol}>
+                  <div className={styles.infoLabel}>PHONE</div>
+                  <div className={styles.infoValue}>{result.phone || 'Not publicly listed'}</div>
+                </div>
+                <div className={styles.infoCol}>
+                  <div className={styles.infoLabel}>ADDRESS</div>
+                  <div className={styles.infoValue}>{result.address || 'Information unavailable'}</div>
+                </div>
               </div>
-            </div>
 
-            <div className={styles.reportSection}>
-              <h3><Search size={18}/> Competitor Analysis</h3>
-              {result.competitors?.length > 0 ? (
+              <div className={styles.sectionBlock}>
+                <h3 className={styles.sectionTitle}>PRODUCTS & SERVICES</h3>
+                <div className={styles.pillsContainer}>
+                  {result.products?.map((item, i) => (
+                    <span key={i} className={styles.pill}>{item}</span>
+                  ))}
+                </div>
+              </div>
+
+              <div className={styles.sectionBlock}>
+                <h3 className={styles.sectionTitle}>AI-GENERATED PAIN POINTS</h3>
+                <ul className={styles.bulletList}>
+                  {result.painPoints?.map((item, i) => (
+                    <li key={i}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className={styles.sectionBlock}>
+                <h3 className={styles.sectionTitle}>COMPETITORS</h3>
                 <div className={styles.competitorGrid}>
-                  {result.competitors.map((comp, i) => (
-                    <div key={i} className={styles.competitorCard}>
-                      <h4>{comp.name}</h4>
-                      {comp.website && <a href={comp.website.startsWith('http') ? comp.website : 'https://'+comp.website} target="_blank" rel="noreferrer">{comp.website}</a>}
-                      {comp.reason && <p className={styles.compReason}>{comp.reason}</p>}
+                  {result.competitors?.map((comp, i) => (
+                    <div key={i} className={styles.compItem}>
+                      <div className={styles.compName}>{comp.name}</div>
+                      <a href={comp.website?.startsWith('http') ? comp.website : `https://${comp.website}`} target="_blank" rel="noreferrer" className={styles.compUrl}>
+                        {comp.website || 'No URL'}
+                      </a>
                     </div>
                   ))}
                 </div>
-              ) : <p className={styles.dim}>No competitors found.</p>}
-            </div>
-            
-            {result.sourcesUsed?.length > 0 && (
-              <div className={styles.reportSection} style={{marginTop: '2rem', borderTop: '1px solid var(--border-color)', paddingTop: '1rem'}}>
-                <h3><LinkIcon size={16}/> Sources Analyzed</h3>
-                <div className={styles.sourcesList}>
-                  {result.sourcesUsed.map((source, i) => (
-                    <span key={i} className={styles.sourceTag}>{source}</span>
-                  ))}
-                </div>
               </div>
-            )}
-          </div>
-        )}
 
-        {/* Hidden Dedicated PDF Export Template */}
+              <div className={styles.actionRow}>
+                <button className={styles.downloadBtn} onClick={downloadPDF} disabled={isDownloading}>
+                  {isDownloading ? 'Generating...' : 'Download PDF Report'}
+                </button>
+                <button 
+                  className={discordSuccess ? styles.discordBtnSuccess : styles.discordBtn} 
+                  onClick={sendToDiscord} 
+                  disabled={isSendingDiscord || discordSuccess}
+                >
+                  {isSendingDiscord ? 'Sending...' : discordSuccess ? '✓ Sent to Discord' : 'Send to Discord'}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <form className={styles.searchBarForm} onSubmit={handleSearch}>
+          <input 
+            type="text"
+            className={styles.searchInput}
+            placeholder="Enter a company name (e.g. Aurora Labs) or website URL (e.g. https://aurora.dev)..."
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            disabled={status === 'loading'}
+          />
+          <button type="submit" className={styles.searchSubmitBtn} disabled={status === 'loading'}>
+            Research &rarr;
+          </button>
+          <div className={styles.searchHint}>ENTER TO RESEARCH &bull; SHIFT+ENTER FOR NEW LINE</div>
+        </form>
+
+        {/* PDF Template matching Image 3 precisely */}
         {status === 'complete' && result && (
           <div id="pdf-export-template" className={styles.pdfTemplate}>
-            <div className={styles.pdfCover}>
-              <div className={styles.pdfCoverHeader}>
-                <h1>Company Intelligence Report</h1>
-                <p>Generated by ReluAI Researcher</p>
-                <div className={styles.pdfDate}>{new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
-              </div>
-              
-              <div className={styles.pdfCompanyTitle}>
-                <h2>{result.companyName || 'Unknown Company'}</h2>
-                <div className={styles.pdfContactInfo}>
-                  {result.website && <span>🌐 {result.website}</span>}
-                  {result.phone && <span>📞 {result.phone}</span>}
-                  {result.address && <span>📍 {result.address}</span>}
-                </div>
-              </div>
-
-              {settings.applicantName && (
-                <div className={styles.pdfApplicant}>
-                  <p><strong>Prepared by:</strong> {settings.applicantName}</p>
-                  {settings.applicantEmail && <p>{settings.applicantEmail}</p>}
-                </div>
-              )}
+            <div className={styles.pdfHeader}>
+              <div className={styles.pdfSubTitle}>RELU CONSULTANCY - COMPANY RESEARCH REPORT</div>
+              <h1 className={styles.pdfMainTitle}>{result.companyName}</h1>
             </div>
+            
+            <div className={styles.pdfBody}>
+              <h2 className={styles.pdfSectionTitle}>COMPANY INFORMATION</h2>
+              <table className={styles.pdfTable}>
+                <tbody>
+                  <tr>
+                    <td className={styles.pdfTableLabel}>Website</td>
+                    <td className={styles.pdfTableValue}>{result.website}</td>
+                  </tr>
+                  <tr>
+                    <td className={styles.pdfTableLabel}>Phone</td>
+                    <td className={styles.pdfTableValue}>{result.phone || 'Not publicly listed'}</td>
+                  </tr>
+                  <tr>
+                    <td className={styles.pdfTableLabel}>Address</td>
+                    <td className={styles.pdfTableValue}>{result.address || 'Information unavailable'}</td>
+                  </tr>
+                </tbody>
+              </table>
 
-            <div className={styles.pdfPageBreak}></div>
+              <h2 className={styles.pdfSectionTitle}>PRODUCTS & SERVICES</h2>
+              <ul className={styles.pdfBullets}>
+                {result.products?.map((item, i) => <li key={i}>{item}</li>)}
+              </ul>
 
-            <div className={styles.pdfPage}>
-              <div className={styles.pdfSection}>
-                <h3>Executive Summary</h3>
-                <p className={styles.pdfSummary}>{result.summary}</p>
-              </div>
+              <h2 className={styles.pdfSectionTitle}>AI-GENERATED PAIN POINTS</h2>
+              <ul className={styles.pdfBullets}>
+                {result.painPoints?.map((item, i) => <li key={i}>{item}</li>)}
+              </ul>
 
-              <div className={styles.pdfSection}>
-                <h3>Products & Services</h3>
-                <ul className={styles.pdfList}>
-                  {result.products?.map((item, i) => <li key={i}>{item}</li>)}
-                </ul>
-              </div>
-
-              <div className={styles.pdfSection}>
-                <h3>Industry Pain Points</h3>
-                <ul className={styles.pdfList}>
-                  {result.painPoints?.map((item, i) => <li key={i}>{item}</li>)}
-                </ul>
-              </div>
-            </div>
-
-            <div className={styles.pdfPageBreak}></div>
-
-            <div className={styles.pdfPage}>
-              <div className={styles.pdfSection}>
-                <h3>Competitor Analysis</h3>
-                <p style={{marginBottom: '10px', fontStyle: 'italic', color: '#555'}}>AI-driven competitive landscape analysis.</p>
-                <table className={styles.pdfTable}>
-                  <thead>
-                    <tr>
-                      <th style={{width: '25%'}}>Competitor</th>
-                      <th style={{width: '25%'}}>Website</th>
-                      <th style={{width: '50%'}}>Competitive Positioning (AI Reasoning)</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {result.competitors?.map((comp, i) => (
-                      <tr key={i}>
-                        <td><strong>{comp.name}</strong></td>
-                        <td>{comp.website}</td>
-                        <td>{comp.reason || 'N/A'}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
-              <div className={styles.pdfSection}>
-                <h3>Verification & Sources</h3>
-                <p style={{marginBottom: '10px'}}>Confidence Score: <strong>{result.confidenceScore}%</strong></p>
-                <div className={styles.pdfSources}>
-                  {result.sourcesUsed?.map((source, i) => (
-                    <div key={i}>• {source}</div>
-                  ))}
-                </div>
+              <h2 className={styles.pdfSectionTitle}>COMPETITORS</h2>
+              <div className={styles.pdfCompetitorsGrid}>
+                {result.competitors?.map((comp, i) => (
+                  <div key={i} className={styles.pdfCompRow}>
+                    <div className={styles.pdfCompName}>{comp.name}</div>
+                    <div className={styles.pdfCompUrl}>{comp.website}</div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
         )}
       </main>
-
-      <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
     </div>
   );
 }

@@ -6,7 +6,9 @@ const SettingsContext = createContext();
 
 export function SettingsProvider({ children }) {
   const [settings, setSettings] = useState({
-    model: 'meta-llama/llama-3.3-70b-instruct:free',
+    model: 'anthropic/claude-3.5-sonnet',
+    openRouterKey: '',
+    serperKey: '',
     discordToken: '',
     discordChannel: '',
     applicantName: '',
