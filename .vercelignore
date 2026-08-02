@@ -1,0 +1,7 @@
+# Ignore documentation and tests for production deployment
+README.md
+CLAUDE.md
+AGENTS.md
+.env.example
+.env.local
+tests/
