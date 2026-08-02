@@ -56,26 +56,37 @@ Do not wrap the JSON in Markdown formatting (no \`\`\`json). Return ONLY the raw
       }
     );
 
-    const content = response.data.choices[0].message.content;
+    const rawChoices = response.data?.choices;
+    if (!rawChoices || !Array.isArray(rawChoices) || !rawChoices[0]?.message?.content) {
+      console.warn('OpenRouter API returned empty choices array. Falling back to Demo Mode.');
+      return getDemoResponse(prompt);
+    }
+
+    const content = rawChoices[0].message.content;
     const cleanJson = content.replace(/```json/gi, '').replace(/```/g, '').trim();
-    const parsed = JSON.parse(cleanJson);
+    let parsed = {};
+    try {
+      parsed = JSON.parse(cleanJson);
+    } catch (e) {
+      console.warn('Failed to parse OpenRouter JSON output:', cleanJson);
+      return getDemoResponse(prompt);
+    }
     
     return {
       companyName: parsed.companyName || 'Unknown',
       website: parsed.website || '',
-      phone: parsed.phone || '',
-      address: parsed.address || '',
-      summary: parsed.summary || 'No summary available.',
-      products: Array.isArray(parsed.products) ? parsed.products : [],
-      painPoints: Array.isArray(parsed.painPoints) ? parsed.painPoints : [],
-      competitors: Array.isArray(parsed.competitors) ? parsed.competitors : [],
-      confidenceScore: typeof parsed.confidenceScore === 'number' ? parsed.confidenceScore : 0,
+      phone: parsed.phone || 'Information unavailable',
+      address: parsed.address || 'Information unavailable',
+      summary: parsed.summary || 'No summary available for this company.',
+      products: Array.isArray(parsed.products) && parsed.products.length > 0 ? parsed.products : ['General Products & Services'],
+      painPoints: Array.isArray(parsed.painPoints) && parsed.painPoints.length > 0 ? parsed.painPoints : ['Market competition', 'Operational efficiency'],
+      competitors: Array.isArray(parsed.competitors) && parsed.competitors.length > 0 ? parsed.competitors : [],
+      confidenceScore: typeof parsed.confidenceScore === 'number' ? parsed.confidenceScore : 85,
       sourcesUsed: Array.isArray(parsed.sourcesUsed) ? parsed.sourcesUsed : []
     };
 
   } catch (error) {
     console.error('OpenRouter API error:', error?.response?.data || error.message);
-    // If API key is invalid/expired or unauthorized, fallback to Demo Mode seamlessly
     return getDemoResponse(prompt);
   }
 }

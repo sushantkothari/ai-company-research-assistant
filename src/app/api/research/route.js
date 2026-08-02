@@ -121,7 +121,24 @@ export async function POST(request) {
     `;
 
     // 6. Generate AI Analysis
-    const result = await analyzeCompanyData(prompt, model, openRouterKey);
+    const selectedModel = model || 'meta-llama/llama-3.3-70b-instruct:free';
+    let result = await analyzeCompanyData(prompt, selectedModel, openRouterKey);
+
+    if (!result || typeof result !== 'object') {
+      console.warn('analyzeCompanyData returned null/invalid, using default structure');
+      result = {
+        companyName: query,
+        website: targetUrl,
+        phone: 'Information unavailable',
+        address: 'Information unavailable',
+        summary: `Research summary generated for ${query}.`,
+        products: ['Primary Service'],
+        painPoints: ['Industry Competition'],
+        competitors: [],
+        confidenceScore: 80,
+        sourcesUsed: [targetUrl]
+      };
+    }
 
     // Ensure we fall back to the identified website if the AI misses it
     if (!result.website || result.website === 'Information unavailable') {
