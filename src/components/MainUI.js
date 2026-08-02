@@ -31,17 +31,15 @@ export default function MainUI() {
     e.preventDefault();
     if (!input.trim()) return;
     
-    setStatus('searching');
+    setStatus('crawling');
     setProgressLog([]);
     setResult(null);
     setErrorMsg('');
 
     addLog(`Initiating deep research for: ${input}`);
+    addLog('Resolving target and querying Google Search...');
     
     try {
-      addLog('Resolving target and querying Google Search...');
-      setStatus('crawling');
-      
       const response = await fetch('/api/research', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -65,7 +63,10 @@ export default function MainUI() {
       setStatus('complete');
       
       if (settings.discordToken && settings.discordChannel) {
-        sendToDiscord(data);
+        // Wait 800ms for DOM report-content to fully render before sending
+        setTimeout(() => {
+          sendToDiscord(data);
+        }, 800);
       } else {
         showToast('Report generated successfully!');
       }
@@ -112,10 +113,23 @@ export default function MainUI() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const sendToDiscord = async (data) => {
+  const sendToDiscord = async (dataToUse) => {
+    const data = dataToUse || result;
+    if (!data) return;
+
+    if (!settings.discordToken || !settings.discordChannel) {
+      showToast('Please add Discord Token & Channel ID in Settings!');
+      return;
+    }
+
+    setIsSendingDiscord(true);
     addLog('Preparing to send report to Discord...');
     try {
       const element = document.getElementById('report-content');
+      if (!element) {
+        throw new Error('Report layout not ready yet');
+      }
+
       const opt = {
         margin:       10,
         filename:     `report.pdf`,
@@ -123,9 +137,11 @@ export default function MainUI() {
         html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#0d1117' },
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
       };
+
       const html2pdf = (await import('html2pdf.js')).default;
-      const rawPdf = await html2pdf().set(opt).from(element).outputPdf('blob');
-      const pdfBlob = rawPdf instanceof Blob ? rawPdf : new Blob([rawPdf], { type: 'application/pdf' });
+      const pdfWorker = html2pdf().set(opt).from(element);
+      const pdfArrayBuffer = await pdfWorker.outputPdf('arraybuffer');
+      const pdfBlob = new Blob([pdfArrayBuffer], { type: 'application/pdf' });
 
       const formData = new FormData();
       formData.append('file', pdfBlob, 'report.pdf');
@@ -144,15 +160,18 @@ export default function MainUI() {
       });
 
       if (response.ok) {
-        addLog('Successfully sent report to Discord channel.');
+        addLog('Successfully sent report to Discord channel!');
         showToast('Discord upload successful!');
       } else {
-        throw new Error('Discord API rejected request');
+        const errJson = await response.json().catch(() => ({}));
+        throw new Error(errJson.error || 'Discord API rejected request');
       }
     } catch (e) {
+      console.error(e);
       addLog('Error sending to Discord: ' + e.message);
-      showToast('Discord integration failed.');
+      showToast('Discord upload failed.');
     }
+    setIsSendingDiscord(false);
   };
 
   return (
@@ -218,6 +237,9 @@ export default function MainUI() {
               <div className={styles.resultActions}>
                 <button onClick={copyJson} className={styles.secondaryBtn}>
                   {copied ? <CheckCircle2 size={16}/> : <Copy size={16} />} JSON
+                </button>
+                <button onClick={() => sendToDiscord(result)} className={styles.secondaryBtn} disabled={isSendingDiscord}>
+                  <Send size={16} /> {isSendingDiscord ? 'Sending...' : 'Send to Discord'}
                 </button>
                 <button onClick={downloadPDF} className={styles.primaryBtn} disabled={isDownloading}>
                   {isDownloading ? <span className={styles.spinIcon}><Search size={16}/></span> : <Download size={16} />} 
