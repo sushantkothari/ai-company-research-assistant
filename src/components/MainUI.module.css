@@ -547,7 +547,14 @@
 .pillsContainer {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px;
+}
+
+.paragraphText {
+  color: #334155;
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0;
 }
 
 .pill {
@@ -905,6 +912,13 @@
 
 .pdfBullets li {
   margin-bottom: 6px;
+}
+
+.pdfParagraph {
+  color: #1e293b;
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0;
 }
 
 .pdfCompTable {

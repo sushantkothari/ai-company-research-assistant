@@ -28,6 +28,7 @@ CRITICAL RULES:
   "phone": "Phone Number or Information unavailable",
   "address": "Full Address or Information unavailable",
   "summary": "3-4 objective sentences summarizing the company's core business, history, and mission.",
+  "targetAudience": "Target audience / market or Information unavailable",
   "products": ["Product/Service 1", "Product/Service 2"],
   "painPoints": ["Insightful pain point 1 based on industry", "Insightful pain point 2"],
   "competitors": [
@@ -106,6 +107,7 @@ async function getDemoResponse(prompt) {
       phone: "Information unavailable",
       address: "Information unavailable",
       summary: "Aurora Labs provides the Aurora platform, which is an EVM (Ethereum Virtual Machine) scaling solution built on the NEAR Protocol. It enables developers to build Ethereum-compatible applications on a high-throughput, low-cost blockchain architecture.",
+      targetAudience: "Web3 developers, dApp creators, and enterprises needing scalable EVM infrastructure",
       products: ["EVM scaling on NEAR", "Cross-chain interoperability", "Aurora Cloud"],
       painPoints: ["Ethereum high gas fees", "Cross-chain fragmentation", "Web3 onboarding friction"],
       competitors: [
@@ -124,13 +126,9 @@ async function getDemoResponse(prompt) {
       website: "https://tesla.com",
       phone: "+1 (800) 613-8840",
       address: "Austin, Texas, USA",
-      summary: "Tesla, Inc. is an American multinational automotive and clean energy company headquartered in Austin, Texas. Tesla designs and manufactures electric vehicles, stationary battery energy storage devices, solar panels, and solar shingles.",
-      products: [
-        "Model S, Model 3, Model X, Model Y Electric Vehicles",
-        "Cybertruck & Tesla Semi",
-        "Powerwall & Megapack Battery Energy Storage",
-        "Solar Roof & Supercharger Network"
-      ],
+      summary: "Tesla, Inc. designs, develops, manufactures, and sells fully electric vehicles, energy generation, and storage systems. The company is a leader in the transition to sustainable energy, combining automotive engineering with advanced AI and robotics.",
+      targetAudience: "Consumers seeking premium EVs, sustainable energy advocates, and commercial fleet operators",
+      products: ["Electric Vehicles (Model S, 3, X, Y)", "Solar Panels", "Megapack & Powerwall", "Full Self-Driving (FSD) Software"],
       painPoints: [
         "Navigating global supply chain bottlenecks and lithium raw material volatility.",
         "Managing intense competition from legacy automakers transitioning to EVs.",
@@ -157,13 +155,9 @@ async function getDemoResponse(prompt) {
       website: "https://stripe.com",
       phone: "+1 (888) 926-2673",
       address: "San Francisco, CA, USA",
-      summary: "Stripe is a financial infrastructure platform for businesses. Millions of companies—from the world's largest enterprises to the most ambitious startups—use Stripe to accept payments, grow their revenue, and accelerate new business opportunities.",
-      products: [
-        "Stripe Payments & Checkout",
-        "Stripe Billing (Subscription Management)",
-        "Stripe Connect (Marketplace Payments)",
-        "Stripe Radar (Fraud Prevention)"
-      ],
+      summary: "Stripe provides financial infrastructure for the internet, offering a suite of APIs that enable businesses to accept payments, manage subscriptions, and send payouts globally. It is widely used by startups and massive enterprises alike to handle complex online commerce.",
+      targetAudience: "Online businesses, e-commerce platforms, developers, and SaaS startups",
+      products: ["Stripe Payments", "Stripe Billing", "Stripe Connect", "Stripe Atlas"],
       painPoints: [
         "Mitigating complex cross-border fraud and chargeback disputes.",
         "Managing evolving international financial compliance and tax regulations.",
@@ -188,13 +182,9 @@ async function getDemoResponse(prompt) {
       website: "https://reluconsultancy.in",
       phone: "+91 98765 43210",
       address: "India",
-      summary: "Relu Consultancy is a technology services and solution provider specializing in Artificial Intelligence, Automation, Web Scraping, and custom Cloud Software development for enterprises.",
-      products: [
-        "AI & Machine Learning Solutions",
-        "Automated Data Extraction & Web Scraping",
-        "Custom Enterprise Web Applications",
-        "API Integration & Cloud Automation"
-      ],
+      summary: "Relu Consultancy is a premier technology consulting firm specializing in AI development, digital transformation, and custom software engineering. They empower businesses to rapidly scale their technical capabilities and adopt cutting-edge frameworks.",
+      targetAudience: "Startups and Enterprise companies looking to integrate AI or scale technical teams",
+      products: ["AI Development", "Technical Consulting", "Software Engineering"],
       painPoints: [
         "Scaling automated scraping workflows against complex anti-bot systems.",
         "Managing rate limits and response latencies across heterogeneous LLM providers.",
@@ -220,12 +210,9 @@ async function getDemoResponse(prompt) {
     website: "https://example.com",
     phone: "+1 (800) 555-0199",
     address: "San Francisco, CA, USA",
-    summary: "Sample Enterprise is a technology provider delivering cloud, AI, and automation tools designed to optimize business operations and workflow efficiencies.",
-    products: [
-      "Cloud Data Platform",
-      "AI Workflow Automation Suite",
-      "Enterprise Analytics Dashboard"
-    ],
+    summary: "Sample Enterprise is a generic placeholder company used for demonstration purposes. It highlights the structured data format that would typically contain a company's real business summary and mission statement.",
+    targetAudience: "Developers and testers evaluating the AI response schema",
+    products: ["Enterprise Software", "Cloud Hosting", "Managed IT Services"],
     painPoints: [
       "High infrastructure costs when scaling machine learning models.",
       "Integration friction with legacy software systems.",

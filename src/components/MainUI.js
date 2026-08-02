@@ -461,6 +461,16 @@ export default function MainUI() {
               </div>
 
               <div className={styles.sectionBlock}>
+                <h3 className={styles.sectionTitle}>COMPANY SUMMARY</h3>
+                <p className={styles.paragraphText}>{result.summary || 'Information unavailable'}</p>
+              </div>
+              
+              <div className={styles.sectionBlock}>
+                <h3 className={styles.sectionTitle}>TARGET AUDIENCE / MARKET</h3>
+                <p className={styles.paragraphText}>{result.targetAudience || 'Information unavailable'}</p>
+              </div>
+
+              <div className={styles.sectionBlock}>
                 <h3 className={styles.sectionTitle}>PRODUCTS & SERVICES</h3>
                 <div className={styles.pillsContainer}>
                   {result.products?.map((item, i) => (
@@ -552,6 +562,12 @@ export default function MainUI() {
                   </tr>
                 </tbody>
               </table>
+
+              <h2 className={styles.pdfSectionTitle}>COMPANY SUMMARY</h2>
+              <p className={styles.pdfParagraph}>{result.summary || 'Information unavailable'}</p>
+
+              <h2 className={styles.pdfSectionTitle}>TARGET AUDIENCE / MARKET</h2>
+              <p className={styles.pdfParagraph}>{result.targetAudience || 'Information unavailable'}</p>
 
               <h2 className={styles.pdfSectionTitle}>PRODUCTS &amp; SERVICES</h2>
               <ul className={styles.pdfBullets}>
