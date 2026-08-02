@@ -49,7 +49,7 @@ Do not wrap the JSON in Markdown formatting (no \`\`\`json). Return ONLY the raw
         headers: {
           'Authorization': `Bearer ${apiKey}`,
           'HTTP-Referer': 'https://reluconsultancy.in',
-          'X-Title': 'Relu AI Researcher',
+          'X-Title': 'AI Company Research Assistant',
           'Content-Type': 'application/json'
         },
         timeout: 60000

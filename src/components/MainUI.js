@@ -484,7 +484,7 @@ export default function MainUI() {
         {status === 'complete' && result && (
           <div id="pdf-export-template" className={styles.pdfTemplate}>
             <div className={styles.pdfHeader}>
-              <div className={styles.pdfSubTitle}>RELU CONSULTANCY - COMPANY RESEARCH REPORT</div>
+              <div className={styles.pdfSubTitle}>AI COMPANY RESEARCH REPORT</div>
               <h1 className={styles.pdfMainTitle}>{result.companyName}</h1>
             </div>
             
