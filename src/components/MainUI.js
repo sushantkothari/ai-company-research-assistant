@@ -245,6 +245,9 @@ export default function MainUI() {
                   >
                     {MODELS.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
                   </select>
+                  <svg className={styles.selectChevron} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
                 </div>
               </label>
 
