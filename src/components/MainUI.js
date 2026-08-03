@@ -92,16 +92,18 @@ export default function MainUI() {
 
       const discordRes = await fetch('/api/discord', { method: 'POST', body: formData });
       if (discordRes.ok) {
-        // Find the assistant message with this data and mark discord success
         setMessages(prev => prev.map(msg => 
           msg.role === 'assistant' && msg.data === data 
             ? { ...msg, discordSuccess: true } 
             : msg
         ));
       } else {
-        console.warn('Discord upload failed, check settings.');
+        const errText = await discordRes.text();
+        alert('Discord upload failed: ' + errText);
+        console.warn('Discord upload failed:', errText);
       }
     } catch (e) {
+      alert('Discord error: ' + e.message);
       console.error('Discord error:', e);
     }
     setIsSendingDiscord(false);
