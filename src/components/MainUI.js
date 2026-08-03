@@ -5,20 +5,20 @@ import styles from './MainUI.module.css';
 import { useSettings } from '@/context/SettingsContext';
 
 const CURATED_MODELS = [
-  { id: 'deepseek/deepseek-chat:free', name: '🟢 DeepSeek V3 — Free' },
-  { id: 'google/gemini-2.5-flash:free', name: '🟢 Gemini 2.5 Flash — Free' },
-  { id: 'meta-llama/llama-4-maverick:free', name: '🟢 Llama 4 Maverick — Free' },
-  { id: 'qwen/qwen-3:free', name: '🟢 Qwen 3 — Free' },
   { id: 'poolside/laguna-s-2.1:free', name: '🟢 Poolside Laguna S 2.1 — Free' },
-  { id: 'mistralai/mistral-small:free', name: '🟢 Mistral Small — Free' },
-  { id: 'google/gemma-3:free', name: '🟢 Gemma 3 — Free' },
-  { id: 'openai/gpt-5', name: '🔵 GPT-5 — Paid' },
-  { id: 'anthropic/claude-4-sonnet', name: '🔵 Claude Sonnet 4 — Paid' },
-  { id: 'anthropic/claude-4-opus', name: '🔵 Claude Opus 4 — Paid' },
-  { id: 'google/gemini-2.5-pro', name: '🔵 Gemini 2.5 Pro — Paid' },
-  { id: 'meta-llama/llama-4-behemoth', name: '🔵 Llama 4 Behemoth — Paid' },
-  { id: 'x-ai/grok-4', name: '🔵 Grok 4 — Paid' },
-  { id: 'deepseek/deepseek-r1', name: '🔵 DeepSeek R1 — Paid' },
+  { id: 'nvidia/nemotron-3-ultra-550b-a55b:free', name: '🟢 Nemotron-3 Ultra 550B — Free' },
+  { id: 'openai/gpt-oss-20b:free', name: '🟢 GPT-OSS 20B — Free' },
+  { id: 'openai/gpt-4o', name: '🔵 GPT-4o — Paid' },
+  { id: 'openai/gpt-4o-mini', name: '🔵 GPT-4o Mini — Paid' },
+  { id: 'openai/o1-mini', name: '🔵 o1-mini — Paid' },
+  { id: 'anthropic/claude-3.5-sonnet', name: '🔵 Claude 3.5 Sonnet — Paid' },
+  { id: 'anthropic/claude-3.5-haiku', name: '🔵 Claude 3.5 Haiku — Paid' },
+  { id: 'anthropic/claude-3-opus', name: '🔵 Claude 3 Opus — Paid' },
+  { id: 'google/gemini-pro-1.5', name: '🔵 Gemini 1.5 Pro — Paid' },
+  { id: 'google/gemini-1.5-flash', name: '🔵 Gemini 1.5 Flash — Paid' },
+  { id: 'meta-llama/llama-3.3-70b-instruct', name: '🔵 Llama 3.3 70B — Paid' },
+  { id: 'meta-llama/llama-3.1-405b-instruct', name: '🔵 Llama 3.1 405B — Paid' },
+  { id: 'deepseek/deepseek-chat', name: '🔵 DeepSeek V3 — Paid' },
   { id: 'qwen/qwen-max', name: '🔵 Qwen Max — Paid' }
 ];
 

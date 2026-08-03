@@ -298,13 +298,26 @@ export async function POST(request) {
       </html>
     `;
 
-    const puppeteerModule = await import('puppeteer');
-    const puppeteer = puppeteerModule.default || puppeteerModule;
-
-    const browser = await puppeteer.launch({
-      headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
-    });
+    let browser;
+    const isVercel = process.env.VERCEL === '1' || process.env.VERCEL_ENV;
+    
+    if (isVercel) {
+      const puppeteerCore = (await import('puppeteer-core')).default;
+      const chromium = (await import('@sparticuz/chromium')).default;
+      browser = await puppeteerCore.launch({
+        args: chromium.args,
+        defaultViewport: chromium.defaultViewport,
+        executablePath: await chromium.executablePath(),
+        headless: chromium.headless,
+      });
+    } else {
+      const puppeteerModule = await import('puppeteer');
+      const puppeteer = puppeteerModule.default || puppeteerModule;
+      browser = await puppeteer.launch({
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
+      });
+    }
     
     console.log("=== [/api/pdf RECEIVED JSON] ===", JSON.stringify(data, null, 2));
     

@@ -3,17 +3,20 @@ const fs = require('fs');
 const path = require('path');
 
 const COMPANIES = [
-  'Gigabyte', 'ASRock', 'Daydreamsoft Infotech', 'NetApp', 'Corsair',
-  'Palantir', 'CloudBees', 'MongoDB', 'DigitalOcean', 'Snowflake',
-  'Databricks', 'Confluent', 'Elastic', 'Hashicorp', 'Veeam',
-  'Zoho', 'Freshworks', 'BrowserStack', 'Razorpay', 'CRED',
-  'Pine Labs', 'Postman', 'Redis', 'Supabase', 'Perplexity',
-  'Anthropic', 'Mistral', 'Cohere', 'Scale AI', 'Hugging Face'
+  'Kingston', 'Intel', 'CloudBees', 'Databricks', 'Snowflake',
+  'Palantir', 'Cohere', 'Anthropic', 'OpenAI', 'Perplexity',
+  'DeepMind', 'MongoDB', 'Elastic', 'Hashicorp', 'Redis',
+  'CrowdStrike', 'SentinelOne', 'NetApp', 'Gigabyte', 'ASRock',
+  'Pine Labs', 'Postman', 'Supabase', 'Mistral', 'Scale AI',
+  'Hugging Face', 'Zoho', 'Freshworks', 'BrowserStack', 'Razorpay'
 ];
 
 async function runEvaluations() {
   console.log('Starting 30-Company Robust Evaluation Suite...');
-  const browser = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox'] });
+  const browser = await puppeteer.launch({ 
+    headless: 'new', 
+    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-infobars', '--window-position=0,0', '--ignore-certifcate-errors', '--ignore-certifcate-errors-spki-list', '--disable-popup-blocking'] 
+  });
   const results = [];
   
   for (const company of COMPANIES) {
@@ -26,6 +29,11 @@ async function runEvaluations() {
     const downloadPath = path.join(__dirname, '..', 'outputs');
     if (!fs.existsSync(downloadPath)) fs.mkdirSync(downloadPath);
     const client = await page.target().createCDPSession();
+    await client.send('Browser.setDownloadBehavior', {
+      behavior: 'allow',
+      downloadPath: downloadPath,
+      eventsEnabled: true
+    });
     await client.send('Page.setDownloadBehavior', { behavior: 'allow', downloadPath });
 
     let success = true;

@@ -1,0 +1,152 @@
+[
+  {
+    "company": "Gigabyte",
+    "success": false,
+    "errorMsg": "Waiting failed: 90000ms exceeded"
+  },
+  {
+    "company": "ASRock",
+    "success": true,
+    "errorMsg": ""
+  },
+  {
+    "company": "Daydreamsoft Infotech",
+    "success": true,
+    "errorMsg": ""
+  },
+  {
+    "company": "NetApp",
+    "success": true,
+    "errorMsg": ""
+  },
+  {
+    "company": "Corsair",
+    "success": true,
+    "errorMsg": ""
+  },
+  {
+    "company": "Palantir",
+    "success": true,
+    "errorMsg": ""
+  },
+  {
+    "company": "CloudBees",
+    "success": true,
+    "errorMsg": ""
+  },
+  {
+    "company": "MongoDB",
+    "success": true,
+    "errorMsg": ""
+  },
+  {
+    "company": "DigitalOcean",
+    "success": true,
+    "errorMsg": ""
+  },
+  {
+    "company": "Snowflake",
+    "success": false,
+    "errorMsg": "Waiting failed: 90000ms exceeded"
+  },
+  {
+    "company": "Databricks",
+    "success": true,
+    "errorMsg": ""
+  },
+  {
+    "company": "Confluent",
+    "success": true,
+    "errorMsg": ""
+  },
+  {
+    "company": "Elastic",
+    "success": true,
+    "errorMsg": ""
+  },
+  {
+    "company": "Hashicorp",
+    "success": false,
+    "errorMsg": "Waiting failed: 90000ms exceeded"
+  },
+  {
+    "company": "Veeam",
+    "success": true,
+    "errorMsg": ""
+  },
+  {
+    "company": "Zoho",
+    "success": true,
+    "errorMsg": ""
+  },
+  {
+    "company": "Freshworks",
+    "success": false,
+    "errorMsg": "Waiting failed: 90000ms exceeded"
+  },
+  {
+    "company": "BrowserStack",
+    "success": false,
+    "errorMsg": "Waiting failed: 90000ms exceeded"
+  },
+  {
+    "company": "Razorpay",
+    "success": true,
+    "errorMsg": ""
+  },
+  {
+    "company": "CRED",
+    "success": true,
+    "errorMsg": ""
+  },
+  {
+    "company": "Pine Labs",
+    "success": false,
+    "errorMsg": "Waiting failed: 90000ms exceeded"
+  },
+  {
+    "company": "Postman",
+    "success": false,
+    "errorMsg": "Waiting failed: 90000ms exceeded"
+  },
+  {
+    "company": "Redis",
+    "success": false,
+    "errorMsg": "Waiting failed: 90000ms exceeded"
+  },
+  {
+    "company": "Supabase",
+    "success": false,
+    "errorMsg": "Waiting failed: 90000ms exceeded"
+  },
+  {
+    "company": "Perplexity",
+    "success": false,
+    "errorMsg": "Waiting failed: 90000ms exceeded"
+  },
+  {
+    "company": "Anthropic",
+    "success": false,
+    "errorMsg": "Waiting failed: 90000ms exceeded"
+  },
+  {
+    "company": "Mistral",
+    "success": true,
+    "errorMsg": ""
+  },
+  {
+    "company": "Cohere",
+    "success": true,
+    "errorMsg": ""
+  },
+  {
+    "company": "Scale AI",
+    "success": true,
+    "errorMsg": ""
+  },
+  {
+    "company": "Hugging Face",
+    "success": true,
+    "errorMsg": ""
+  }
+]

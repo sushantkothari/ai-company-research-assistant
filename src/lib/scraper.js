@@ -1,7 +1,5 @@
 import axios from 'axios';
 import * as cheerio from 'cheerio';
-import puppeteer from 'puppeteer';
-
 const IMPORTANT_PAGES = ['about', 'products', 'product', 'services', 'service', 'solutions', 'solution', 'pricing', 'contact', 'careers'];
 
 function hashText(str) {
@@ -29,23 +27,53 @@ async function scrapeWithPuppeteer(baseUrl) {
   let browser = null;
   try {
     console.log(`Fallback to Puppeteer for ${baseUrl}`);
-    browser = await puppeteer.launch({ 
-      headless: 'new',
-      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-blink-features=AutomationControlled']
-    });
+    
+    const isVercel = process.env.VERCEL === '1' || process.env.VERCEL_ENV;
+    
+    if (isVercel) {
+      const puppeteerCore = (await import('puppeteer-core')).default;
+      const chromium = (await import('@sparticuz/chromium')).default;
+      browser = await puppeteerCore.launch({
+        args: chromium.args,
+        defaultViewport: chromium.defaultViewport,
+        executablePath: await chromium.executablePath(),
+        headless: chromium.headless,
+      });
+    } else {
+      const puppeteerModule = await import('puppeteer');
+      const puppeteer = puppeteerModule.default || puppeteerModule;
+      browser = await puppeteer.launch({ 
+        headless: 'new',
+        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-blink-features=AutomationControlled']
+      });
+    }
+    
     const page = await browser.newPage();
     await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
     await page.setExtraHTTPHeaders({
       'Accept-Language': 'en-US,en;q=0.9',
     });
     
-    await page.goto(baseUrl, { waitUntil: 'domcontentloaded', timeout: 15000 });
+    const tryExtract = async (url) => {
+      await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 15000 });
+      await new Promise(r => setTimeout(r, 3500)); // wait for cloudflare
+      const html = await page.content();
+      const $ = cheerio.load(html);
+      return extractText($);
+    };
     
-    // brief wait for dynamic content
-    await new Promise(r => setTimeout(r, 2500));
-    const html = await page.content();
-    const $ = cheerio.load(html);
-    const homeText = extractText($);
+    let homeText = await tryExtract(baseUrl);
+    
+    // If Cloudflare blocked the home page, try the about page which might be less strictly cached/blocked
+    if (homeText.length < 200 || homeText.toLowerCase().includes('cloudflare') || homeText.toLowerCase().includes('just a moment')) {
+       console.log('Puppeteer home page blocked or short, trying /about...');
+       const aboutUrl = baseUrl.endsWith('/') ? baseUrl + 'about' : baseUrl + '/about';
+       const aboutText = await tryExtract(aboutUrl);
+       if (aboutText.length > 200 && !aboutText.toLowerCase().includes('cloudflare')) {
+         homeText = aboutText;
+       }
+    }
+    
     await browser.close();
     
     if (homeText.length < 200) {
@@ -53,7 +81,7 @@ async function scrapeWithPuppeteer(baseUrl) {
     }
     
     return {
-      text: `[Home Page]\n${homeText}\n\n`,
+      text: `[Scraped Page]\n${homeText}\n\n`,
       pagesCrawled: 1
     };
   } catch (error) {

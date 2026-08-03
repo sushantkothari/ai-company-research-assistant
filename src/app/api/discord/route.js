@@ -55,8 +55,8 @@ export async function POST(request) {
       content: safeMessageContent
     }));
 
-    const pdfFile = new File([buffer], fileName, { type: 'application/pdf' });
-    discordPayload.append('files[0]', pdfFile);
+    const pdfBlob = new Blob([buffer], { type: 'application/pdf' });
+    discordPayload.append('files[0]', pdfBlob, fileName);
 
     const discordResponse = await fetch(`https://discord.com/api/v10/channels/${cleanChannelId}/messages`, {
       method: 'POST',
