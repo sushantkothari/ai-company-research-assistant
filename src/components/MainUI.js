@@ -5,6 +5,7 @@ import styles from './MainUI.module.css';
 import { useSettings } from '@/context/SettingsContext';
 
 const CURATED_MODELS = [
+  { id: 'poolside/laguna-s-2.1:free', name: '🟢 Poolside Laguna S 2.1 — Free' },
   { id: 'nvidia/nemotron-3-super-120b-a12b:free', name: '🟢 Nemotron-3 Super 120B — Free' },
   { id: 'nvidia/nemotron-3-nano-30b-a3b:free', name: '🟢 Nemotron-3 Nano 30B — Free' },
   { id: 'google/gemma-4-26b-a4b-it:free', name: '🟢 Gemma 4 26B — Free' },
