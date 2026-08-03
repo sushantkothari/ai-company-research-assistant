@@ -36,21 +36,34 @@ export async function POST(request) {
 
     const fileName = `${safeCompanyName}_Report.pdf`;
 
-    const messageContent = `**New Company Research Report Generated!**\n\n` +
-      `**Applicant Details:**\n` +
-      `- Name: ${applicantName || 'Not Provided'}\n` +
-      `- Email: ${applicantEmail || 'Not Provided'}\n\n` +
-      `**Research Details:**\n` +
-      `- Company: ${companyName}\n` +
-      `- Website: ${website}\n\n` +
-      `Please find the generated PDF report attached below.`;
-
-    const safeMessageContent = messageContent.replace(/[^\x00-\x7F]/g, '');
-
     // Official Discord API v10 Multipart Format using form-data for robust Node.js streams
     const discordPayload = new FormDataNode();
+    
+    // Constructing a Professional Rich Embed
+    const embed = {
+      title: '📄 New Company Research Report',
+      description: `A comprehensive AI-generated research report for **${companyName}** has been successfully generated.`,
+      color: 0x0ea5e9, // Tailwind sky-500
+      fields: [
+        {
+          name: '🏢 Company Details',
+          value: `**Name:** ${companyName}\n**Website:** ${website}`,
+          inline: false
+        },
+        {
+          name: '👤 Requested By',
+          value: `**Name:** ${applicantName || 'Not Provided'}\n**Email:** ${applicantEmail || 'Not Provided'}`,
+          inline: false
+        }
+      ],
+      footer: {
+        text: 'AI Company Researcher • Powered by OpenRouter'
+      },
+      timestamp: new Date().toISOString()
+    };
+
     discordPayload.append('payload_json', JSON.stringify({
-      content: safeMessageContent
+      embeds: [embed]
     }));
 
     // Convert to Buffer and pass to form-data with explicit content type
