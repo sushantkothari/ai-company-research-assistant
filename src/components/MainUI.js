@@ -323,7 +323,7 @@ export default function MainUI() {
             <div className={styles.settingsGroup}>
               <div className={styles.discordHeaderBox}>
                 <h4>Discord Bot Integration</h4>
-                <p>After research completes, the report auto-sends to your configured channel.</p>
+                <p>Click "Send to Discord" on any generated report to forward it to your channel.</p>
               </div>
               
               <label className={styles.label}>
@@ -615,7 +615,7 @@ export default function MainUI() {
                               onClick={() => sendToDiscord(msg.data)} 
                               disabled={isSendingDiscord || msg.discordSuccess}
                             >
-                              {isSendingDiscord ? 'Sending...' : msg.discordSuccess ? '✓ Auto-Sent to Discord' : 'Send to Discord'}
+                              {isSendingDiscord ? 'Sending...' : msg.discordSuccess ? '✓ Sent to Discord' : 'Send to Discord'}
                             </button>
                           </div>
                         </div>
