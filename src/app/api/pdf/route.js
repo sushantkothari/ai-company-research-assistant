@@ -303,11 +303,11 @@ export async function POST(request) {
     
     if (isVercel) {
       const puppeteerCore = (await import('puppeteer-core')).default;
-      const chromium = (await import('@sparticuz/chromium')).default;
+      const chromium = (await import('@sparticuz/chromium-min')).default;
       browser = await puppeteerCore.launch({
         args: chromium.args,
         defaultViewport: chromium.defaultViewport,
-        executablePath: await chromium.executablePath(),
+        executablePath: await chromium.executablePath('https://github.com/Sparticuz/chromium/releases/download/v149.0.0/chromium-v149.0.0-pack.tar'),
         headless: chromium.headless,
       });
     } else {
@@ -333,7 +333,7 @@ export async function POST(request) {
     console.log("=== [/api/pdf SAVED HTML] ===");
 
     const page = await browser.newPage();
-    await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
+    await page.setContent(htmlContent, { waitUntil: 'domcontentloaded' });
     
     const headerTemplate = `
       <div style="width: 100%; font-size: 8px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #94a3b8; padding: 0 0.8in; display: flex; justify-content: space-between;">
