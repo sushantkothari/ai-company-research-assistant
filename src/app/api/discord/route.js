@@ -25,16 +25,12 @@ export async function POST(request) {
     }
     const cleanChannelId = String(channelId).trim().replace(/^["']|["']$/g, '');
 
-    // Convert file Blob to Buffer
-    const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-
     // Sanitize filename to strict ASCII to prevent ByteString HTTP Header errors
     const safeCompanyName = String(companyName || 'company')
       .replace(/[^\x00-\x7F]/g, '') // remove non-ASCII
       .replace(/[^\w\s-]/g, '')     // remove special chars
       .trim()
-      .replace(/\s+/g, '_') || 'Company';
+      .replace(/\s+/g, '_');
 
     const fileName = `${safeCompanyName}_Report.pdf`;
 
@@ -55,8 +51,7 @@ export async function POST(request) {
       content: safeMessageContent
     }));
 
-    const pdfBlob = new Blob([buffer], { type: 'application/pdf' });
-    discordPayload.append('files[0]', pdfBlob, fileName);
+    discordPayload.append('files[0]', file, fileName);
 
     const discordResponse = await fetch(`https://discord.com/api/v10/channels/${cleanChannelId}/messages`, {
       method: 'POST',

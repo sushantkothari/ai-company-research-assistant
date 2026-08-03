@@ -177,11 +177,6 @@ export default function MainUI() {
         return nextState;
       });
       
-      // Auto-send to Discord if configured
-      if (settings.discordToken && settings.discordChannel) {
-        sendToDiscord(data);
-      }
-      
     } catch (err) {
       clearInterval(interval);
       console.error(err);
