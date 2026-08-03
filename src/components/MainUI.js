@@ -4,12 +4,22 @@ import React, { useState, useEffect, useRef } from 'react';
 import styles from './MainUI.module.css';
 import { useSettings } from '@/context/SettingsContext';
 
-const DEFAULT_MODELS = [
-  { id: 'meta-llama/llama-3.3-70b-instruct', name: 'Meta: Llama 3.3 70B Instruct (Recommended)' },
-  { id: 'openai/gpt-4o-mini', name: 'OpenAI: GPT-4o Mini (Fast & Cheap)' },
-  { id: 'google/gemini-2.0-flash-lite-preview-02-05:free', name: 'Google: Gemini 2.0 Flash Lite (Free)' },
-  { id: 'deepseek/deepseek-r1:free', name: 'DeepSeek: R1 Reasoning (Free)' },
-  { id: 'openai/gpt-4o', name: 'OpenAI: GPT-4o (Premium)' }
+const CURATED_MODELS = [
+  { id: 'deepseek/deepseek-chat:free', name: '🟢 DeepSeek V3 — Free' },
+  { id: 'google/gemini-2.5-flash:free', name: '🟢 Gemini 2.5 Flash — Free' },
+  { id: 'meta-llama/llama-4-maverick:free', name: '🟢 Llama 4 Maverick — Free' },
+  { id: 'qwen/qwen-3:free', name: '🟢 Qwen 3 — Free' },
+  { id: 'poolside/laguna-s-2.1:free', name: '🟢 Poolside Laguna S 2.1 — Free' },
+  { id: 'mistralai/mistral-small:free', name: '🟢 Mistral Small — Free' },
+  { id: 'google/gemma-3:free', name: '🟢 Gemma 3 — Free' },
+  { id: 'openai/gpt-5', name: '🔵 GPT-5 — Paid' },
+  { id: 'anthropic/claude-4-sonnet', name: '🔵 Claude Sonnet 4 — Paid' },
+  { id: 'anthropic/claude-4-opus', name: '🔵 Claude Opus 4 — Paid' },
+  { id: 'google/gemini-2.5-pro', name: '🔵 Gemini 2.5 Pro — Paid' },
+  { id: 'meta-llama/llama-4-behemoth', name: '🔵 Llama 4 Behemoth — Paid' },
+  { id: 'x-ai/grok-4', name: '🔵 Grok 4 — Paid' },
+  { id: 'deepseek/deepseek-r1', name: '🔵 DeepSeek R1 — Paid' },
+  { id: 'qwen/qwen-max', name: '🔵 Qwen Max — Paid' }
 ];
 
 const SAMPLE_BADGES = [
@@ -31,28 +41,10 @@ export default function MainUI() {
   const [isSendingDiscord, setIsSendingDiscord] = useState(false);
   const [savedConfigToast, setSavedConfigToast] = useState(false);
   
-  const [models, setModels] = useState(DEFAULT_MODELS);
+  const [models, setModels] = useState(CURATED_MODELS);
   const messagesEndRef = useRef(null);
 
-  // Fetch OpenRouter models dynamically
-  useEffect(() => {
-    async function fetchModels() {
-      try {
-        const res = await fetch('https://openrouter.ai/api/v1/models');
-        const data = await res.json();
-        if (data && Array.isArray(data.data)) {
-          const defaultIds = new Set(DEFAULT_MODELS.map(m => m.id));
-          const otherModels = data.data
-            .filter(m => !defaultIds.has(m.id))
-            .map(m => ({ id: m.id, name: m.name }));
-          setModels([...DEFAULT_MODELS, ...otherModels]);
-        }
-      } catch (e) {
-        console.warn('Failed to fetch OpenRouter models, using defaults.');
-      }
-    }
-    fetchModels();
-  }, []);
+
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });

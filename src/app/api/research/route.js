@@ -89,7 +89,7 @@ export async function POST(request) {
     }
     const compRes = await searchGoogle(`${domainForSearch} top competitors alternatives software industry`, serperKey);
     if (compRes && Array.isArray(compRes.organic)) {
-      competitorSearchContext = compRes.organic.slice(0, 5).map(r => `${r.title}: ${r.link}`).join('\n');
+      competitorSearchContext = compRes.organic.slice(0, 8).map(r => `${r.title}: ${r.snippet}\nURL: ${r.link}`).join('\n\n');
     }
     console.log('=== [4. SERPER COMPETITOR SEARCH CONTEXT] ===:', competitorSearchContext ? competitorSearchContext.substring(0, 150) + '...' : 'None');
 
@@ -102,10 +102,15 @@ export async function POST(request) {
       ${websiteData ? websiteData : 'Could not extract website data.'}
       
       --- Google Search Context ---
-      ${searchData ? JSON.stringify(searchData.organic?.slice(0, 3)) : ''}
+      ${searchData ? JSON.stringify(searchData.organic?.slice(0, 10).map(r => ({ title: r.title, snippet: r.snippet }))) : ''}
       
       --- Competitor Search Context ---
       ${competitorSearchContext}
+      
+      CRITICAL INSTRUCTIONS:
+      1. DO NOT output "Not Available" or "Information unavailable" if you can deduce the answer from the Google Search Snippets or Competitor Context.
+      2. If Website Crawl Data is missing, you MUST heavily rely on the snippets to determine the Business Model, Target Audience, Products, and Key Observations.
+      3. For any field (like Phone/Address) that truly has no evidence in either the crawl or snippets, you may leave it as "Not Available".
       
       Based on the above data, generate the comprehensive JSON report as requested.
     `;
