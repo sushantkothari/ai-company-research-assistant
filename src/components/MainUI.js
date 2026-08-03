@@ -615,7 +615,7 @@ export default function MainUI() {
                               onClick={() => sendToDiscord(msg.data)} 
                               disabled={isSendingDiscord || msg.discordSuccess}
                             >
-                              {isSendingDiscord ? 'Sending...' : msg.discordSuccess ? '✓ Sent to Discord' : 'Send to Discord'}
+                              {isSendingDiscord ? 'Sending...' : msg.discordSuccess ? '✓ Sent' : 'Send to Discord'}
                             </button>
                           </div>
                         </div>
