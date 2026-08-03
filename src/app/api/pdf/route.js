@@ -43,7 +43,7 @@ export async function POST(request) {
         }
         const name = c.name || c.company || c.competitor || 'Competitor';
         const rawUrl = c.website || c.url || c.link || 'Not Available';
-        const url = rawUrl !== 'Not Available' ? (rawUrl.startsWith('http') ? rawUrl : `https://${rawUrl}`) : 'Not Available';
+        const url = rawUrl !== 'Not Available' ? (rawUrl.startsWith('http') ? rawUrl : 'https://' + rawUrl) : 'Not Available';
         const reason = c.reason || c.description || c.explanation || 'Direct market competitor';
         return `
           <tr style="page-break-inside: avoid;">
