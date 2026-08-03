@@ -15,14 +15,13 @@ function hashText(str) {
 }
 
 // Wrapper to retry failed axios requests
-async function fetchWithRetry(url, options, retries = 1) {
+async function fetchWithRetry(url, options, retries = 0) {
   for (let i = 0; i <= retries; i++) {
     try {
       return await axios.get(url, options);
     } catch (error) {
       if (i === retries) throw error;
-      console.warn(`Retry ${i + 1} for ${url}`);
-      await new Promise(res => setTimeout(res, 1000));
+      await new Promise(res => setTimeout(res, 500));
     }
   }
 }
@@ -40,8 +39,8 @@ export async function scrapeWebsiteDeep(baseUrl) {
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
         'Accept-Language': 'en-US,en;q=0.5'
       },
-      timeout: 10000 // 10s timeout
-    }, 1);
+      timeout: 4000 // 4s timeout for home page
+    }, 0);
     
     const $ = cheerio.load(data);
     
@@ -84,13 +83,14 @@ export async function scrapeWebsiteDeep(baseUrl) {
     contentHashes.add(hashText(homeText));
 
     let combinedText = `[Home Page]\n${homeText}\n\n`;
+    let pagesCrawled = 1;
     
     // 2. Fetch subpages in parallel
     const subpageRequests = urlsToCrawl.map(url => 
       fetchWithRetry(url, {
         headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' },
-        timeout: 6000 // Shorter timeout for subpages
-      }, 0) // No retry for subpages to save time
+        timeout: 3000 // 3s timeout for subpages
+      }, 0)
     );
 
     const results = await Promise.allSettled(subpageRequests);
@@ -106,6 +106,7 @@ export async function scrapeWebsiteDeep(baseUrl) {
         if (!contentHashes.has(textHash) && subText.length > 50) {
           contentHashes.add(textHash);
           combinedText += `[${subUrl}]\n${subText}\n\n`;
+          pagesCrawled++;
         }
       } else {
         console.warn(`Skipping inaccessible subpage ${urlsToCrawl[index]}`);
@@ -113,11 +114,14 @@ export async function scrapeWebsiteDeep(baseUrl) {
     });
 
     // Enforce hard limit of 18000 chars for LLM context window safety
-    return combinedText.substring(0, 18000);
+    return {
+      text: combinedText.substring(0, 18000),
+      pagesCrawled
+    };
     
   } catch (error) {
     console.error(`Error scraping deep ${baseUrl}:`, error.message);
-    return null;
+    return { text: null, pagesCrawled: 0 };
   }
 }
 

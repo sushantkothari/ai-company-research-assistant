@@ -3,9 +3,6 @@ import { searchGoogle } from '@/lib/serper';
 import { scrapeWebsiteDeep } from '@/lib/scraper';
 import { analyzeCompanyData } from '@/lib/openrouter';
 
-// Simple LRU-like in-memory cache for production speed
-const cache = new Map();
-
 const BLOCKED_DOMAINS = [
   'wikipedia.org', 'linkedin.com', 'facebook.com', 'crunchbase.com', 
   'bloomberg.com', 'g2.com', 'capterra.com', 'yelp.com', 'glassdoor.com',
@@ -26,19 +23,16 @@ export async function POST(request) {
   try {
     const body = await request.json();
     let { query, model, openRouterKey, serperKey } = body;
+    const startTime = Date.now();
 
     // 1. Input Sanitization & Validation
     if (!query || typeof query !== 'string') {
       return NextResponse.json({ error: 'Valid query is required' }, { status: 400 });
     }
     
-    query = query.trim().substring(0, 150); // Prevent extremely long prompt injection payloads
-    
-    const cacheKey = `${query}_${model}`;
-    if (cache.has(cacheKey)) {
-      console.log('Serving from cache:', query);
-      return NextResponse.json(cache.get(cacheKey));
-    }
+    query = query.trim().substring(0, 150);
+    console.log('\n==================================================');
+    console.log('=== [1. INPUT QUERY] ===:', query);
 
     let targetUrl = query;
     let searchData = null;
@@ -63,26 +57,29 @@ export async function POST(request) {
       }
       
       if (!foundValidUrl) {
-        // Smart fallback if Serper key is missing or no valid search results returned
         const cleanName = query.toLowerCase().replace(/[^a-z0-9]/g, '');
         targetUrl = `https://${cleanName}.com`;
       }
     } else {
-      // Ensure scheme exists for direct URLs
       if (!targetUrl.startsWith('http')) {
         targetUrl = 'https://' + targetUrl;
       }
       try {
-        new URL(targetUrl); // Validate
+        new URL(targetUrl);
       } catch (e) {
         return NextResponse.json({ error: 'Invalid URL provided.' }, { status: 400 });
       }
     }
 
-    // 3. Resilient Crawling
-    const websiteData = await scrapeWebsiteDeep(targetUrl);
+    console.log('=== [2. SERPER OFFICIAL URL] ===:', targetUrl);
 
-    // 4. Competitor Discovery via Search (Supplementing AI Reasoning)
+    // 3. Resilient Crawling
+    const scraperResult = await scrapeWebsiteDeep(targetUrl);
+    const websiteData = scraperResult ? scraperResult.text : null;
+    const pagesCrawled = scraperResult ? scraperResult.pagesCrawled : 0;
+    console.log('=== [3. CRAWLER EXTRACTED LENGTH] ===:', websiteData ? websiteData.length : 0, 'characters');
+
+    // 4. Competitor Discovery via Search
     let competitorSearchContext = '';
     let domainForSearch = query;
     if (isUrl) {
@@ -94,6 +91,7 @@ export async function POST(request) {
     if (compRes && Array.isArray(compRes.organic)) {
       competitorSearchContext = compRes.organic.slice(0, 5).map(r => `${r.title}: ${r.link}`).join('\n');
     }
+    console.log('=== [4. SERPER COMPETITOR SEARCH CONTEXT] ===:', competitorSearchContext ? competitorSearchContext.substring(0, 150) + '...' : 'None');
 
     // 5. Assemble highly structured AI Prompt
     const prompt = `
@@ -101,7 +99,7 @@ export async function POST(request) {
       Identified Official Website: ${targetUrl}
       
       --- Website Crawl Data ---
-      ${websiteData ? websiteData : 'Could not extract website data. The site might be blocking crawlers or requires JavaScript.'}
+      ${websiteData ? websiteData : 'Could not extract website data.'}
       
       --- Google Search Context ---
       ${searchData ? JSON.stringify(searchData.organic?.slice(0, 3)) : ''}
@@ -109,49 +107,35 @@ export async function POST(request) {
       --- Competitor Search Context ---
       ${competitorSearchContext}
       
-      Based on the above data, generate the comprehensive JSON report as requested. 
-      IMPORTANT INSTRUCTIONS:
-      - Only use supported evidence. If information is unavailable, output "Information unavailable" or omit the field. DO NOT hallucinate.
-      - Infer top competitors logically based on the company's industry, products, and geography, supplemented by the search context. Rank them by relevance.
-      - Generate exactly 3 highly insightful, industry-specific pain points.
+      Based on the above data, generate the comprehensive JSON report as requested.
     `;
 
     // 6. Generate AI Analysis
-    const selectedModel = model || 'meta-llama/llama-3.3-70b-instruct:free';
+    const selectedModel = model || 'meta-llama/llama-3.3-70b-instruct';
+    console.log('=== [5. OPENROUTER REQUEST SENT] === Model:', selectedModel);
+    
     let result = await analyzeCompanyData(prompt, selectedModel, openRouterKey);
 
-    if (!result || typeof result !== 'object') {
-      console.warn('analyzeCompanyData returned null/invalid, using default structure');
-      result = {
-        companyName: query,
-        website: targetUrl,
-        phone: 'Information unavailable',
-        address: 'Information unavailable',
-        summary: `Research summary generated for ${query}.`,
-        products: ['Primary Service'],
-        painPoints: ['Industry Competition'],
-        competitors: [],
-        confidenceScore: 80,
-        sourcesUsed: [targetUrl]
-      };
-    }
+    // Final Sanitization Pass (Replace any residual "Information unavailable" strings with "Not Available")
+    const sanitizeStr = (str) => (!str || str.includes('Information unavailable') || str.includes('unavailable') ? 'Not Available' : str);
 
-    // Ensure we fall back to the identified website if the AI misses it
-    if (!result.website || result.website === 'Information unavailable') {
-      result.website = targetUrl;
-    }
+    result.website = sanitizeStr(result.website === 'Not Available' ? targetUrl : result.website);
+    result.phone = sanitizeStr(result.phone);
+    result.address = sanitizeStr(result.address);
+    result.targetAudience = sanitizeStr(result.targetAudience);
+    result.metadata = {
+      researchDuration: Date.now() - startTime,
+      pagesCrawled: pagesCrawled,
+      modelUsed: selectedModel
+    };
 
-    // Update Cache (Manage size to prevent memory leaks)
-    if (cache.size > 100) {
-      const firstKey = cache.keys().next().value;
-      cache.delete(firstKey);
-    }
-    cache.set(cacheKey, result);
-
+    console.log('=== [6. OPENROUTER RETURNED & SANITIZED JSON] ===:', JSON.stringify(result, null, 2));
+    console.log('=== [7. RETURNED TO UI] === Status 200 OK');
+    console.log('==================================================\n');
     return NextResponse.json(result);
 
   } catch (error) {
-    console.error('Research API Error:', error);
-    return NextResponse.json({ error: 'An unexpected error occurred during research.' }, { status: 500 });
+    console.error('=== [ERROR OCCURRED IN RESEARCH PIPELINE] ===:', error.message);
+    return NextResponse.json({ error: error.message || 'An unexpected error occurred during research.' }, { status: 500 });
   }
 }

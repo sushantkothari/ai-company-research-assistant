@@ -1,0 +1,63 @@
+{
+  "companyName": "Notion",
+  "website": "https://www.notion.com/",
+  "phone": "Not Available",
+  "address": "Not Available",
+  "summary": "Notion is an AI workspace platform that helps teams streamline their workflow and automate repetitive tasks. It offers a range of features, including Custom Agents, AI Meeting Notes, and Enterprise Search, to help teams work more efficiently. Notion is trusted by over 100 million users worldwide, including 62% of Fortune 100 companies and over 50% of YC companies. The company is based in San Francisco and has offices around the world.",
+  "targetAudience": "Not Available",
+  "businessModel": "Notion generates revenue through its pricing plans, which include Free, Plus, Business, and Enterprise options. The company also offers Custom Agents and AI Meeting Notes as part of its Business and Enterprise plans. Notion's business model is designed to support everyone from free personal accounts to enterprise businesses.",
+  "keyObservations": [
+    "Notion is a leading AI workspace platform with over 100 million users worldwide.",
+    "The company offers a range of features, including Custom Agents, AI Meeting Notes, and Enterprise Search.",
+    "Notion is trusted by 62% of Fortune 100 companies and over 50% of YC companies."
+  ],
+  "strategicInsights": [
+    "Notion's AI-powered features, such as Custom Agents and AI Meeting Notes, are designed to help teams automate repetitive tasks and work more efficiently.",
+    "The company's focus on enterprise customers and its range of pricing plans suggest that it is targeting large and medium-sized businesses."
+  ],
+  "products": [
+    {
+      "name": "Custom Agents",
+      "description": "Custom Agents are AI-powered tools that automate recurring work for teams. They can be set up to perform tasks such as answering questions, routing incoming work, and gathering updates."
+    },
+    {
+      "name": "AI Meeting Notes",
+      "description": "AI Meeting Notes is a feature that uses AI to capture and summarize meeting notes. It can also be used to assign tasks and update projects automatically."
+    }
+  ],
+  "painPoints": [
+    {
+      "topic": "Streamlining workflow and automating repetitive tasks",
+      "explanation": "Many teams struggle with streamlining their workflow and automating repetitive tasks. Notion's AI-powered features, such as Custom Agents and AI Meeting Notes, are designed to help teams overcome this challenge."
+    }
+  ],
+  "competitors": [
+    {
+      "name": "Slite",
+      "website": "https://slite.com/",
+      "reason": "Slite is a competitor to Notion in the AI workspace market. It offers a range of features, including note-taking and collaboration tools, and is known for its simplicity and ease of use."
+    },
+    {
+      "name": "Zapier",
+      "website": "https://zapier.com/",
+      "reason": "Zapier is a competitor to Notion in the automation and integration market. It offers a range of features, including automated workflows and integrations with other apps, and is known for its ease of use and flexibility."
+    }
+  ],
+  "confidenceScore": 90,
+  "sourcesUsed": [
+    "https://www.notion.com/",
+    "https://www.notion.com/about",
+    "https://www.notion.com/product/ai",
+    "https://www.notion.com/product/agents",
+    "https://www.notion.com/product/ai-meeting-notes",
+    "https://medium.com/@danielasgharian/my-favorite-notion-alternatives-0f47b4cc7dae",
+    "https://zapier.com/blog/best-notion-alternatives/",
+    "https://www.reddit.com/r/productivity/comments/1n7ns8g/whos_still_using_notion_and_who_found_an/",
+    "https://slite.com/learn/best-notion-alternatives"
+  ],
+  "metadata": {
+    "researchDuration": 60972,
+    "pagesCrawled": 5,
+    "modelUsed": "meta-llama/llama-3.3-70b-instruct"
+  }
+}

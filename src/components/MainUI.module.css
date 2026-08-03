@@ -364,20 +364,69 @@
   display: inline-block;
 }
 
-.mainContentBody {
+/* CHAT FEED */
+.chatFeedWrapper {
   flex: 1;
-  padding: 32px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-bottom: 140px; /* space for sticky search bar */
+}
+
+.chatFeed {
+  width: 100%;
+  max-width: 900px;
+  padding: 32px 32px 140px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.userMessageRow {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.userMessageBubble {
+  background-color: #3b82f6;
+  color: #fff;
+  padding: 16px 24px;
+  border-radius: 24px 24px 4px 24px;
+  font-size: 16px;
+  max-width: 70%;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  line-height: 1.5;
+}
+
+.assistantMessageRow {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  align-items: flex-start;
+}
+
+.assistantAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #0f172a;
+  border: 1px solid #1e293b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.assistantContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 /* HERO SECTION */
 .heroSection {
-  max-width: 640px;
-  width: 100%;
   text-align: center;
   margin-top: 8vh;
   display: flex;
@@ -437,30 +486,9 @@
   background-color: #1e293b;
 }
 
-.heroDivider {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  max-width: 480px;
-}
-
-.dividerLine {
-  flex: 1;
-  height: 1px;
-  background-color: #1e293b;
-}
-
-.dividerText {
-  padding: 0 16px;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: #475569;
-}
-
 /* RESULT CARD */
 .resultCard {
   width: 100%;
-  max-width: 800px;
   background-color: #0f172a;
   border: 1px solid #1e293b;
   border-radius: 12px;
@@ -504,44 +532,30 @@
   letter-spacing: 0.5px;
 }
 
-.infoColumns {
+.metadataBar {
   display: flex;
-  gap: 48px;
+  gap: 20px;
+  background-color: rgba(30, 41, 59, 0.5);
+  border: 1px solid #334155;
+  padding: 12px 16px;
+  border-radius: 8px;
   margin-bottom: 28px;
-  border-bottom: 1px solid #1e293b;
-  padding-bottom: 28px;
+  flex-wrap: wrap;
 }
 
-.infoCol {
+.metaItem {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: #cbd5e1;
   display: flex;
-  flex-direction: column;
+  align-items: center;
   gap: 6px;
 }
 
-.infoLabel {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: #64748b;
-  font-weight: 700;
-  letter-spacing: 1px;
-}
-
-.infoValue {
-  font-size: 15px;
-  color: #e2e8f0;
-}
-
-.sectionBlock {
-  margin-bottom: 28px;
-}
-
-.sectionTitle {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-weight: 700;
+.metaItem strong {
   color: #94a3b8;
-  margin: 0 0 14px 0;
-  letter-spacing: 1.5px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
 }
 
 .uiInfoTable {
@@ -567,6 +581,24 @@
   font-size: 15px;
   color: #e2e8f0;
   padding: 8px 0;
+}
+
+.sectionBlock {
+  margin-bottom: 28px;
+}
+
+.sectionTitle {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: #94a3b8;
+  margin: 0 0 14px 0;
+  letter-spacing: 1.5px;
+}
+
+.paragraphText {
+  color: #cbd5e1;
+  line-height: 1.6;
 }
 
 .richList {
@@ -635,6 +667,13 @@
 
 .compUrl:hover {
   text-decoration: underline;
+}
+
+.compReason {
+  font-size: 13px;
+  color: #cbd5e1;
+  line-height: 1.5;
+  margin-top: 4px;
 }
 
 .actionRow {
@@ -752,21 +791,12 @@
   letter-spacing: 1px;
 }
 
-.loadingContainer, .errorContainer {
-  margin-top: 12vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
-}
-
 .loadingBox {
   background-color: #0f172a;
   border: 1px solid #1e293b;
   border-radius: 12px;
   padding: 24px;
   width: 100%;
-  max-width: 600px;
 }
 
 .loadingTitle {
@@ -798,17 +828,8 @@
   background-color: #10b981;
   color: #000;
   border-radius: 50%;
-  font-size: 14px;
   font-weight: bold;
-}
-
-.stepIconSpinner {
-  width: 24px;
-  height: 24px;
-  border: 3px solid #334155;
-  border-top-color: #eab308;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
+  font-size: 14px;
 }
 
 .stepIconPending {
@@ -817,190 +838,79 @@
   justify-content: center;
   width: 24px;
   height: 24px;
-  border: 1px solid #334155;
-  color: #475569;
+  background-color: transparent;
+  color: #64748b;
   border-radius: 50%;
-  font-size: 11px;
-  font-family: var(--font-mono);
+  border: 2px solid #334155;
+  font-size: 12px;
+  font-weight: bold;
 }
 
-.stepTextActive {
-  font-size: 14px;
-  color: #f8fafc;
-}
-
-.stepTextPending {
-  font-size: 14px;
-  color: #475569;
-}
-
-.errorText {
-  color: #ef4444;
-  font-size: 15px;
+.stepIconSpinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid #1e293b;
+  border-top-color: var(--accent-gold);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
 
-/* PDF TEMPLATE */
-.pdfTemplateWrapper {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 0;
-  overflow: hidden;
-}
-
-.pdfTemplate {
-  width: 800px;
-  background-color: #ffffff;
-  color: #000000;
-  font-family: var(--font-sans), Arial, sans-serif;
-}
-
-.pdfHeader {
-  background-color: #0f172a;
-  color: #ffffff;
-  padding: 30px 40px;
-  border-bottom: 24px solid #4f46e5;
-}
-
-.pdfSubTitle {
-  font-family: var(--font-sans), Arial, sans-serif;
-  font-size: 13px;
-  color: #4f46e5;
-  letter-spacing: 1px;
-  margin-bottom: 12px;
-  text-transform: uppercase;
-  font-weight: 700;
-}
-
-.pdfMainTitle {
-  font-size: 44px;
-  margin: 0;
-  font-weight: 500;
-  color: #ffffff;
-  letter-spacing: -1px;
-}
-
-.pdfBody {
-  padding: 40px;
-}
-
-.pdfSectionTitle {
-  font-family: var(--font-sans), Arial, sans-serif;
-  font-size: 14px;
-  color: #4338ca;
-  margin: 32px 0 16px 0;
-  border-bottom: 1px solid #f1f5f9;
-  padding-bottom: 8px;
-  text-transform: uppercase;
-  font-weight: 700;
-}
-
-.pdfTable {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 24px;
-}
-
-.pdfTableLabel {
-  width: 25%;
-  font-weight: 700;
-  padding: 10px 0;
-  color: #475569;
-  border-bottom: 1px solid #f1f5f9;
+.stepTextActive {
+  color: #f8fafc;
   font-size: 14px;
 }
 
-.pdfTableValue {
-  padding: 10px 0;
-  color: #0f172a;
-  border-bottom: 1px solid #f1f5f9;
-  font-size: 14px;
-}
-
-.pdfTableValue a {
-  color: #0f172a;
-  text-decoration: none;
-}
-
-.compReason {
-  font-size: 13px;
-  color: #94a3b8;
-  line-height: 1.5;
-  border-top: 1px solid #334155;
-  padding-top: 12px;
-}
-
-.pdfBullets {
-  margin: 0;
-  padding-left: 20px;
-  color: #1e293b;
-  font-size: 14px;
-  line-height: 1.6;
-}
-
-.pdfBullets li {
-  margin-bottom: 6px;
-}
-
-.pdfParagraph {
-  color: #1e293b;
-  font-size: 14px;
-  line-height: 1.6;
-  margin: 0;
-}
-
-.pdfRichList {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.pdfRichItem {
-  margin-bottom: 4px;
-}
-
-.pdfRichTitle {
-  font-weight: 700;
-  font-size: 14px;
-  color: #0f172a;
-}
-
-.pdfRichDesc {
-  font-size: 13px;
-  color: #334155;
-  line-height: 1.5;
-  padding-left: 12px;
-  margin-top: 2px;
-}
-
-.pdfCompTable {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-}
-
-.pdfCompNameCol {
-  width: 40%;
-  font-weight: 700;
-  color: #0f172a;
-  font-size: 14px;
-  padding: 6px 0;
-}
-
-.pdfCompUrlCol {
-  width: 60%;
+.stepTextPending {
   color: #64748b;
-  font-size: 13px;
-  padding: 6px 0;
+  font-size: 14px;
 }
 
-.pdfFooter {
-  margin-top: 60px;
-  font-size: 12px;
-  color: #94a3b8;
+.errorContainer {
+  background-color: rgba(220, 38, 38, 0.1);
+  border: 1px solid rgba(220, 38, 38, 0.4);
+  color: #ef4444;
+  padding: 16px 24px;
+  border-radius: 8px;
+  width: 100%;
+}
+
+.errorText {
+  margin: 0;
+}
+
+@media (max-width: 1024px) {
+  .competitorGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+  .sidebar {
+    width: 100%;
+    height: 60px;
+    flex-direction: row;
+    overflow: hidden;
+  }
+  .sidebarContent {
+    display: none;
+  }
+  .tabsContainer {
+    display: none;
+  }
+  .heroHeading {
+    font-size: 36px;
+  }
+  .competitorGrid {
+    grid-template-columns: 1fr;
+  }
+  .actionRow {
+    flex-direction: column;
+  }
 }
