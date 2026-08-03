@@ -12,6 +12,7 @@
     "@sparticuz/chromium-min": "^149.0.0",
     "axios": "^1.19.0",
     "cheerio": "^1.2.0",
+    "form-data": "^4.0.6",
     "html2canvas": "^1.4.1",
     "html2pdf.js": "^0.14.0",
     "jspdf": "^4.2.1",

@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server';
+import FormDataNode from 'form-data';
+import axios from 'axios';
 
 export async function POST(request) {
   try {
@@ -45,36 +47,48 @@ export async function POST(request) {
 
     const safeMessageContent = messageContent.replace(/[^\x00-\x7F]/g, '');
 
-    // Official Discord API v10 Multipart Format
-    const discordPayload = new FormData();
+    // Official Discord API v10 Multipart Format using form-data for robust Node.js streams
+    const discordPayload = new FormDataNode();
     discordPayload.append('payload_json', JSON.stringify({
       content: safeMessageContent
     }));
 
-    discordPayload.append('files[0]', file, fileName);
-
-    const discordResponse = await fetch(`https://discord.com/api/v10/channels/${cleanChannelId}/messages`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bot ${cleanToken}`
-      },
-      body: discordPayload
+    // Convert to Buffer and pass to form-data with explicit content type
+    const fileBytes = await file.arrayBuffer();
+    const buffer = Buffer.from(fileBytes);
+    discordPayload.append('files[0]', buffer, {
+      filename: fileName,
+      contentType: 'application/pdf',
+      knownLength: buffer.length
     });
 
-    if (!discordResponse.ok) {
-      const errText = await discordResponse.text();
-      console.error('Discord API Error Response:', errText);
-      return NextResponse.json({ 
-        error: discordResponse.status === 401 
-          ? 'Invalid Discord Bot Token. Please check your Bot Token in Settings.' 
-          : `Discord API Error: ${discordResponse.status}` 
-      }, { status: discordResponse.status });
+    try {
+      await axios.post(
+        `https://discord.com/api/v10/channels/${cleanChannelId}/messages`, 
+        discordPayload, 
+        {
+          headers: {
+            'Authorization': `Bot ${cleanToken}`,
+            ...discordPayload.getHeaders()
+          }
+        }
+      );
+    } catch (axiosError) {
+      if (axiosError.response) {
+        console.error('Discord API Error Response:', axiosError.response.data);
+        return NextResponse.json({ 
+          error: axiosError.response.status === 401 
+            ? 'Invalid Discord Bot Token. Please check your Bot Token in Settings.' 
+            : `Discord API Error: ${axiosError.response.status} - ${JSON.stringify(axiosError.response.data)}` 
+        }, { status: axiosError.response.status });
+      }
+      throw axiosError;
     }
 
     return NextResponse.json({ success: true });
 
   } catch (error) {
-    console.error('Discord API Internal Error:', error);
+    console.error('Discord Upload Error:', error);
     return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 });
   }
 }
