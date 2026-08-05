@@ -5,11 +5,12 @@ import { NextResponse } from 'next/server';
 export async function POST(request) {
   try {
     const data = await request.json();
-    if (!data.companyName) {
-      return NextResponse.json({ error: 'Missing company name' }, { status: 400 });
+    const companyName = data.companyName || data['Company Name'] || data.company || data.name || 'Company';
+    if (!companyName || companyName === 'Company') {
+      console.warn('Warning: Missing company name in data payload.');
     }
 
-    const sanitize = (val) => (!val || val === 'Information unavailable' ? 'Not Available' : val);
+    const sanitize = (val) => (!val || val === 'Information unavailable' || val === 'null' || val === null ? 'Not Available' : val);
 
     const getArrayContent = (arr, titleKey, descKey) => {
       if (!arr || !Array.isArray(arr) || arr.length === 0) return '<div class="card"><div class="card-desc">Not Available</div></div>';
@@ -218,7 +219,7 @@ export async function POST(request) {
       <body>
         <div class="header-banner">
           <div class="subtitle">Executive Intelligence Report</div>
-          <h1 class="title">${sanitize(data.companyName)}</h1>
+          <h1 class="title">${sanitize(companyName)}</h1>
           <div class="meta-info">
             <div><strong>Website:</strong> ${data.website !== 'Not Available' ? `<a href="${data.website}" target="_blank">${sanitize(data.website)}</a>` : 'Not Available'}</div>
             <div><strong>Phone:</strong> ${sanitize(data.phone)}</div>
@@ -360,13 +361,34 @@ export async function POST(request) {
     
     await browser.close();
 
-    return new Response(pdfBuffer, {
+    // Ensure buffer is correctly typed for Vercel Node Runtime
+    const uint8Array = new Uint8Array(pdfBuffer);
+    
+    try {
+      const fs = await import('fs');
+      const path = await import('path');
+      const outDir = path.join(process.cwd(), 'outputs');
+      if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
+      const safeName = companyName.replace(/[^a-zA-Z0-9]/g, '_');
+      fs.writeFileSync(path.join(outDir, `${safeName}_Report.pdf`), pdfBuffer);
+    } catch (e) {
+      console.error('Failed to write PDF to outputs directory:', e);
+    }
+
+    const bypassIdm = request.headers.get('x-bypass-idm') === 'true';
+
+    const headers = {
+      'Content-Type': bypassIdm ? 'application/octet-stream' : 'application/pdf',
+      'Content-Length': uint8Array.length.toString(),
+    };
+
+    if (!bypassIdm) {
+      headers['Content-Disposition'] = `inline; filename="${companyName.replace(/[^a-zA-Z0-9]/g, '_')}.pdf"`;
+    }
+
+    return new NextResponse(uint8Array, {
       status: 200,
-      headers: {
-        'Content-Type': 'application/pdf',
-        'Content-Length': pdfBuffer.length.toString(),
-        'Content-Disposition': 'attachment; filename="report.pdf"'
-      }
+      headers
     });
 
   } catch (error) {

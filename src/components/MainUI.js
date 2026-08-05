@@ -67,16 +67,24 @@ export default function MainUI() {
   };
 
   const sendToDiscord = async (data) => {
-    if (!settings.discordToken || !settings.discordChannel) return;
+    if (!settings.discordToken || !settings.discordChannel) {
+      alert('Discord configuration missing! Please configure your Discord Bot Token and Channel ID in the Settings tab (left sidebar).');
+      return;
+    }
     setIsSendingDiscord(true);
     try {
       const pdfRes = await fetch('/api/pdf', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-bypass-idm': 'true'
+        },
         body: JSON.stringify(data)
       });
       if (!pdfRes.ok) throw new Error('Failed to generate PDF for Discord');
-      const pdfBlob = await pdfRes.blob();
+      const arrayBuffer = await pdfRes.arrayBuffer();
+      if (arrayBuffer.byteLength === 0) throw new Error('Received empty PDF from server for Discord');
+      const pdfBlob = new Blob([arrayBuffer], { type: 'application/pdf' });
 
       const jsonPayload = JSON.stringify({
         companyName: (data.companyName || '').replace(/[^\x00-\x7F]/g, ''),
@@ -213,22 +221,33 @@ export default function MainUI() {
       console.log("=== [STAGE 6: POST /api/pdf REQUEST BODY] ===", JSON.stringify(data));
       const res = await fetch('/api/pdf', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-bypass-idm': 'true'
+        },
         body: JSON.stringify(data)
       });
-      if (!res.ok) throw new Error('PDF generation failed');
-      const blob = await res.blob();
+      if (!res.ok) {
+        const errText = await res.text();
+        throw new Error(`Server returned status ${res.status}: ${errText}`);
+      }
+      const arrayBuffer = await res.arrayBuffer();
+      if (arrayBuffer.byteLength === 0) throw new Error('Received empty PDF from server');
+      
+      const blob = new Blob([arrayBuffer], { type: 'application/pdf' });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      const companyName = data.companyName || data['Company Name'] || data.company || data.name || 'Company';
-      const safeName = companyName.replace(/[^\w\s-]/g, '').trim().replace(/\s+/g, '_');
+      const companyName = data?.companyName || data?.['Company Name'] || data?.company || data?.name || 'Company';
+      const safeName = String(companyName).replace(/[^\w\s-]/g, '').trim().replace(/\s+/g, '_');
       a.download = `${safeName}_Report.pdf`;
+      document.body.appendChild(a);
       a.click();
-      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      setTimeout(() => window.URL.revokeObjectURL(url), 2000);
     } catch (e) {
-      console.error(e);
-      alert('PDF generation failed.');
+      console.error('PDF Download Error:', e);
+      alert(`PDF download issue: ${e.message}`);
     }
     setIsDownloading(false);
   };
