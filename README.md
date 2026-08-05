@@ -15,7 +15,7 @@
   <img src="https://img.shields.io/badge/License-MIT-2E7D32?style=for-the-badge"/>
 </p>
 
-> **An enterprise-grade AI-powered Business Intelligence Assistant that orchestrates deep web scraping, search API synthesis, and Large Language Model (LLM) reasoning to autonomously generate structured, presentation-ready company intelligence reports. The system combines parallel crawling, content deduplication, and strict schema validation to eliminate AI hallucinations and produce deterministic executive insights.**
+> **An enterprise-grade AI-powered Business Intelligence Assistant that orchestrates deep web scraping, search API synthesis, and Large Language Model (LLM) reasoning to autonomously generate structured, presentation-ready company intelligence reports. The system combines parallel crawling, content deduplication, and strict schema validation to mitigate AI hallucinations and produce highly structured executive insights.**
 
 </div>
 
@@ -38,7 +38,7 @@
 
 # Project Overview
 
-This application automates the workflow of a Senior Business Intelligence Analyst. It resolves target domains, navigates corporate websites concurrently, deduplicates boilerplate HTML, synthesizes data via Serper, and enforces strict JSON schemas on top-tier LLMs (Llama 3.3 70B, Gemini Flash) via OpenRouter to produce deterministic, high-value strategic insights.
+This application automates the workflow of a Senior Business Intelligence Analyst. It resolves target domains, navigates corporate websites concurrently, deduplicates boilerplate HTML, synthesizes data via Serper, and enforces strict JSON schemas on top-tier LLMs (Llama 3.3 70B, Gemini Flash) via OpenRouter to produce structured, high-value strategic insights.
 
 ---
 
@@ -56,9 +56,9 @@ Executes parallel HTTP requests across high-signal subpages (`/about`, `/service
 
 Utilizes a 32-bit string hashing algorithm to strip repeated navigational boilerplate, optimizing the LLM context window and reducing token overhead.
 
-## Strict Deterministic AI Extraction
+## Structured AI Extraction & Validation
 
-Enforces complex JSON schema compliance via rigorous system prompt engineering. The pipeline mandates explicit reasoning for competitor discovery, precise Ideal Customer Profiles (ICPs), and exact business model classification, entirely bypassing generic AI hallucinations.
+Enforces complex JSON schema compliance via rigorous system prompt engineering. The pipeline mandates explicit reasoning for competitor discovery, precise Ideal Customer Profiles (ICPs), and exact business model classification, minimizing generic output.
 
 ## Multi-Channel Distribution
 
@@ -133,7 +133,7 @@ ai-company-researcher/
 | :--- | :--- | :--- |
 | **Data Extraction** | Dual-Layer Crawling (Cheerio + Puppeteer) | Pure headless browsers incur ~300MB+ memory overhead, crippling serverless scaling. The system prioritizes lightweight Cheerio parsing for speed, reserving heavy Puppeteer automation strictly as a fallback for JavaScript-heavy or protected domains. |
 | **Token Optimization** | Hashing-Based Deduplication | Corporate websites duplicate headers and footers across all subpages. Hashing extracted paragraphs completely eliminates redundant text, reducing API token costs and maximizing the LLM's attention span on actual business logic. |
-| **AI Reliability** | Multi-Stage Prompting & Strict Parsers | LLMs frequently wrap JSON in markdown blocks or hallucinate fields. The pipeline implements pre-parsing regex sanitizers and automated retry loops to guarantee 100% deterministic JSON objects required for frontend rendering. |
+| **AI Reliability** | Multi-Stage Prompting & Strict Parsers | LLMs frequently wrap JSON in markdown blocks or hallucinate fields. The pipeline implements pre-parsing regex sanitizers and automated retry loops to ensure valid, structured JSON objects required for frontend rendering. |
 | **Download Interception** | Header-Based IDM Bypassing | Aggressive client-side download managers (e.g., IDM) can hijack browser `fetch` requests for PDFs, leading to corrupted data streams. The API explicitly uses `x-bypass-idm` headers and `application/octet-stream` masking to guarantee pristine binary delivery to the client buffer. |
 
 ---

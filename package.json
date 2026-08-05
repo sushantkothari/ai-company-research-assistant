@@ -1,6 +1,24 @@
 {
   "name": "ai-company-researcher",
-  "version": "0.1.0",
+  "version": "1.0.0",
+  "description": "Enterprise-Grade Business Intelligence & Automated Research Pipeline using Next.js, Serper API, and OpenRouter LLM orchestration.",
+  "author": "Sushant Kothari",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sushantkothari/ai-company-research-assistant.git"
+  },
+  "keywords": [
+    "nextjs",
+    "react",
+    "business-intelligence",
+    "ai-agent",
+    "openrouter",
+    "llm",
+    "web-scraping",
+    "serper-api",
+    "pdf-generation"
+  ],
   "private": true,
   "scripts": {
     "dev": "next dev",
