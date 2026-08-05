@@ -18,6 +18,14 @@ export async function GET() {
     }
 
     const EXCLUDED_KEYWORDS = ['embed', 'whisper', 'dall-e', 'stable-diffusion', 'tts', 'sdxl', 'flux', 'midjourney', 'imagen', 'video', 'audio', 'lyria', 'safety', 'guard', 'moderation', 'classifier'];
+    const SPECIFIC_EXCLUDED_IDS = [
+      'inclusionai/ling-3.0-flash:free',
+      'inclusionai/ling-3.0-flash',
+      'google/gemma-4-31b-it:free',
+      'google/gemma-4-31b-it',
+      'nvidia/nemotron-3.5-content-safety:free',
+      'nvidia/nemotron-3.5-content-safety'
+    ];
 
     let availableModels = data.data
       .filter(m => {
@@ -26,6 +34,7 @@ export async function GET() {
         
         // Exclude experimental, internal router proxies, or non-text models
         if (idLower.startsWith('~') || idLower.startsWith('openrouter/')) return false;
+        if (SPECIFIC_EXCLUDED_IDS.includes(m.id.toLowerCase())) return false;
         if (EXCLUDED_KEYWORDS.some(kw => idLower.includes(kw))) return false;
         
         return true;
