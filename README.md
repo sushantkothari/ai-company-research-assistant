@@ -38,7 +38,7 @@
 
 # Project Overview
 
-This application automates the workflow of a Senior Business Intelligence Analyst. It resolves target domains, navigates corporate websites concurrently, deduplicates boilerplate HTML, synthesizes data via Serper, and enforces strict JSON schemas on top-tier LLMs (Llama 3.3 70B, Gemini Flash) via OpenRouter to produce structured, high-value strategic insights.
+This application automates the workflow of a Senior Business Intelligence Analyst. It resolves target domains, navigates corporate websites concurrently, deduplicates boilerplate HTML, synthesizes data via Serper, and enforces strict JSON schemas on OpenRouter-hosted Large Language Models to produce structured, high-value strategic insights.
 
 ---
 
