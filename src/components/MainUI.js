@@ -4,6 +4,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import styles from './MainUI.module.css';
 import { useSettings } from '@/context/SettingsContext';
 
+const SAMPLE_BADGES = [
+  { label: 'Microsoft', value: 'Microsoft' },
+  { label: 'Stripe', value: 'Stripe' },
+  { label: 'Tesla', value: 'Tesla' },
+  { label: 'Aurora', value: 'https://aurora.dev' }
+];
+
 export default function MainUI() {
   const { settings, updateSetting } = useSettings();
   const [activeTab, setActiveTab] = useState('API');
