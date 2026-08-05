@@ -152,7 +152,7 @@ ai-company-researcher/
 | Serper.dev API | Real-time search context synthesis |
 | Cheerio / Puppeteer | DOM parsing and headless browser fallback |
 | Axios | Resilient HTTP networking |
-| html2pdf.js | Client-side A4 document generation |
+| Puppeteer / Headless Chrome | Server-side vector A4 PDF document rendering |
 
 ---
 
