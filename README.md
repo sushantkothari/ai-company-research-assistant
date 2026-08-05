@@ -120,9 +120,13 @@ ai-company-researcher/
 │       ├── openrouter.js            # LLM strict parsing, schema validation & retry logic
 │       ├── scraper.js               # Concurrent Cheerio/Puppeteer web crawler
 │       └── serper.js                # Search API integration
-├── test_scripts/                    # Automated multi-company robust evaluation suites
+├── public/                          # Static assets and icons
+├── test_scripts/                    # Automated multi-company evaluation suites
 ├── .env.example                     # Environment configuration template
-└── package.json                     # System dependencies
+├── .gitignore                       # Version control ignore rules
+├── LICENSE                          # MIT License governance file
+├── next.config.mjs                  # Next.js server configuration
+└── package.json                     # System dependencies & scripts
 ```
 
 ---
