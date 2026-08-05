@@ -1,0 +1,222 @@
+[
+  {
+    "id": "google/gemma-4-31b-it:free",
+    "reason": "HTTP 429 - {\"error\":{\"message\":\"Provider returned error\",\"code\":429,\"metadata\":{\"raw\":\"google/gemma-4-31b-it:free is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations\",\"provider_name\":\"Google AI Studio\",\"is_byok\":false,\"provider_error_code\":\"429\",\"limit_source\":\"upstream_provider_shared_pool\",\"remedy_hint\":\"Retry shortly, add your own provider key (https://openrouter.ai/settings/integrations), or route to another provider with provider routing: https://openrouter.ai/docs/features/provider-routing\"}},\"user_id\":\"user_3HMn0jSaOFLu5hHGtS01X2k5s2i\"}"
+  },
+  {
+    "id": "nvidia/nemotron-nano-12b-v2-vl:free",
+    "reason": "No choices returned"
+  },
+  {
+    "id": "allenai/olmo-3-32b-think",
+    "reason": "HTTP 404 - {\"error\":{\"message\":\"No endpoints found for allenai/olmo-3-32b-think.\",\"code\":404},\"user_id\":\"user_3HMn0jSaOFLu5hHGtS01X2k5s2i\"}"
+  },
+  {
+    "id": "anthropic/claude-opus-4.7-fast",
+    "reason": "HTTP 400 - {\"error\":{\"message\":\"Provider returned error\",\"code\":400,\"metadata\":{\"raw\":\"{\\\"type\\\":\\\"error\\\",\\\"error\\\":{\\\"type\\\":\\\"invalid_request_error\\\",\\\"message\\\":\\\"'claude-opus-4-7' does not support the `speed` parameter. This feature is only available on supported models.\\\"},\\\"request_id\\\":\\\"req_011Cdk4szV7FVSPunT7YxELV\\\"}\",\"provider_name\":\"Anthropic\",\"is_byok\":false}},\"user_id\":\"user_3HMn0jSaOFLu5hHGtS01X2k5s2i\"}"
+  },
+  {
+    "id": "arcee-ai/virtuoso-large",
+    "reason": "HTTP 400 - {\"error\":{\"message\":\"Provider returned error\",\"code\":400,\"metadata\":{\"raw\":\"{\\n  \\\"id\\\": \\\"ov1f2WY-2kFHot-a267d4b51825ff64\\\",\\n  \\\"error\\\": {\\n    \\\"message\\\": \\\"Unable to access non-serverless model arcee-ai/virtuoso-large. Please visit https://api.together.ai/models/arcee-ai/virtuoso-large to create and start a new dedicated endpoint for the model.\\\",\\n    \\\"type\\\": \\\"invalid_request_error\\\",\\n    \\\"param\\\": null,\\n    \\\"code\\\": \\\"model_not_available\\\"\\n  }\\n}\",\"provider_name\":\"Together\",\"is_byok\":false,\"provider_error_code\":\"model_not_available\"}},\"user_id\":\"user_3HMn0jSaOFLu5hHGtS01X2k5s2i\"}"
+  },
+  {
+    "id": "google/gemma-3-27b-it",
+    "reason": "No choices returned"
+  },
+  {
+    "id": "meta/muse-spark-1.1",
+    "reason": "HTTP 403 - {\"error\":{\"message\":\"Provider returned error\",\"code\":403,\"metadata\":{\"raw\":\"This model is only available in the United States.\",\"provider_name\":\"Meta\",\"is_byok\":false}},\"user_id\":\"user_3HMn0jSaOFLu5hHGtS01X2k5s2i\"}"
+  },
+  {
+    "id": "openai/gpt-4-turbo-preview",
+    "reason": "HTTP 404 - {\"error\":{\"message\":\"Provider returned error\",\"code\":404,\"metadata\":{\"raw\":\"{\\n    \\\"error\\\": {\\n        \\\"message\\\": \\\"The model `gpt-4-turbo-preview` does not exist or you do not have access to it.\\\",\\n        \\\"type\\\": \\\"invalid_request_error\\\",\\n        \\\"param\\\": null,\\n        \\\"code\\\": \\\"model_not_found\\\"\\n    }\\n}\\n\",\"provider_name\":\"OpenAI\",\"is_byok\":false,\"provider_error_code\":\"model_not_found\"}},\"user_id\":\"user_3HMn0jSaOFLu5hHGtS01X2k5s2i\"}"
+  },
+  {
+    "id": "openai/gpt-chat-latest",
+    "reason": "No choices returned"
+  },
+  {
+    "id": "openai/gpt-5.3-chat",
+    "reason": "No choices returned"
+  },
+  {
+    "id": "openai/o1-pro",
+    "reason": "HTTP 402 - {\"error\":{\"message\":\"This request requires more credits, or fewer max_tokens. You requested up to 10 tokens, but can only afford 8. To increase, visit https://openrouter.ai/settings/credits and upgrade to a paid account\",\"code\":402,\"metadata\":{\"limit_source\":\"openrouter_credits\",\"remedy_hint\":\"Add credits at https://openrouter.ai/settings/credits, or lower max_tokens / prompt size to fit your remaining balance.\",\"provider_name\":null}},\"user_id\":\"user_3HMn0jSaOFLu5hHGtS01X2k5s2i\"}"
+  },
+  {
+    "id": "perplexity/sonar",
+    "reason": "HTTP 400 - {\"error\":{\"message\":\"Provider returned error\",\"code\":400,\"metadata\":{\"raw\":\"{\\\"error\\\":{\\\"message\\\":\\\"max_tokens must be at least 16\\\",\\\"type\\\":\\\"invalid_request\\\",\\\"code\\\":400,\\\"param\\\":\\\"max_tokens\\\"}}\\n\",\"provider_name\":\"Perplexity\",\"is_byok\":false,\"provider_error_code\":\"400\"}},\"user_id\":\"user_3HMn0jSaOFLu5hHGtS01X2k5s2i\"}"
+  },
+  {
+    "id": "perplexity/sonar-deep-research",
+    "reason": "HTTP 400 - {\"error\":{\"message\":\"Provider returned error\",\"code\":400,\"metadata\":{\"raw\":\"{\\\"error\\\":{\\\"message\\\":\\\"max_tokens must be at least 16 for sonar-deep-research.\\\",\\\"type\\\":\\\"invalid_parameter\\\",\\\"code\\\":400}}\",\"provider_name\":\"Perplexity\",\"is_byok\":false,\"provider_error_code\":\"400\"}},\"user_id\":\"user_3HMn0jSaOFLu5hHGtS01X2k5s2i\"}"
+  },
+  {
+    "id": "perplexity/sonar-pro",
+    "reason": "HTTP 400 - {\"error\":{\"message\":\"Provider returned error\",\"code\":400,\"metadata\":{\"raw\":\"{\\\"error\\\":{\\\"message\\\":\\\"max_tokens must be at least 16\\\",\\\"type\\\":\\\"invalid_request\\\",\\\"code\\\":400,\\\"param\\\":\\\"max_tokens\\\"}}\\n\",\"provider_name\":\"Perplexity\",\"is_byok\":false,\"provider_error_code\":\"400\"}},\"user_id\":\"user_3HMn0jSaOFLu5hHGtS01X2k5s2i\"}"
+  },
+  {
+    "id": "perplexity/sonar-pro-search",
+    "reason": "HTTP 400 - {\"error\":{\"message\":\"Provider returned error\",\"code\":400,\"metadata\":{\"raw\":\"{\\\"error\\\":{\\\"message\\\":\\\"max_tokens must be at least 16\\\",\\\"type\\\":\\\"invalid_request\\\",\\\"code\\\":400,\\\"param\\\":\\\"max_tokens\\\"}}\\n\",\"provider_name\":\"Perplexity\",\"is_byok\":false,\"provider_error_code\":\"400\"}},\"user_id\":\"user_3HMn0jSaOFLu5hHGtS01X2k5s2i\"}"
+  },
+  {
+    "id": "perplexity/sonar-reasoning-pro",
+    "reason": "HTTP 400 - {\"error\":{\"message\":\"Provider returned error\",\"code\":400,\"metadata\":{\"raw\":\"{\\\"error\\\":{\\\"message\\\":\\\"max_tokens must be at least 16\\\",\\\"type\\\":\\\"invalid_request\\\",\\\"code\\\":400,\\\"param\\\":\\\"max_tokens\\\"}}\\n\",\"provider_name\":\"Perplexity\",\"is_byok\":false,\"provider_error_code\":\"400\"}},\"user_id\":\"user_3HMn0jSaOFLu5hHGtS01X2k5s2i\"}"
+  },
+  {
+    "id": "sakana/fugu-ultra",
+    "reason": "HTTP 400 - {\"error\":{\"message\":\"Provider returned error\",\"code\":400,\"metadata\":{\"raw\":\"{\\\"error\\\":{\\\"message\\\":\\\"Invalid 'max_output_tokens': must be greater than or equal to 16.\\\",\\\"type\\\":\\\"invalid_request_error\\\",\\\"param\\\":\\\"max_output_tokens\\\",\\\"code\\\":null}}\",\"provider_name\":\"Sakana AI\",\"is_byok\":false}},\"user_id\":\"user_3HMn0jSaOFLu5hHGtS01X2k5s2i\"}"
+  },
+  {
+    "id": "relace/relace-apply-3",
+    "reason": "HTTP 400 - {\"error\":{\"message\":\"Provider returned error\",\"code\":400,\"metadata\":{\"raw\":\"expected `<code>...</code>` and `<update>...</update>` tags\",\"provider_name\":\"Relace\",\"is_byok\":false}},\"user_id\":\"user_3HMn0jSaOFLu5hHGtS01X2k5s2i\"}"
+  },
+  {
+    "id": "x-ai/grok-4.20-multi-agent",
+    "reason": "HTTP 402 - {\"error\":{\"message\":\"Insufficient credits. This account never purchased credits. Make sure your key is on the correct account or org, and if so, purchase more at https://openrouter.ai/settings/credits\",\"code\":402,\"metadata\":{\"limit_source\":\"openrouter_credits\",\"remedy_hint\":\"Add credits at https://openrouter.ai/settings/credits, or lower max_tokens / prompt size to fit your remaining balance.\"}}}"
+  },
+  {
+    "id": "stepfun/step-3.5-flash",
+    "reason": "HTTP 402 - {\"error\":{\"message\":\"Insufficient credits. This account never purchased credits. Make sure your key is on the correct account or org, and if so, purchase more at https://openrouter.ai/settings/credits\",\"code\":402,\"metadata\":{\"limit_source\":\"openrouter_credits\",\"remedy_hint\":\"Add credits at https://openrouter.ai/settings/credits, or lower max_tokens / prompt size to fit your remaining balance.\"}}}"
+  },
+  {
+    "id": "stepfun/step-3.7-flash",
+    "reason": "HTTP 402 - {\"error\":{\"message\":\"Insufficient credits. This account never purchased credits. Make sure your key is on the correct account or org, and if so, purchase more at https://openrouter.ai/settings/credits\",\"code\":402,\"metadata\":{\"limit_source\":\"openrouter_credits\",\"remedy_hint\":\"Add credits at https://openrouter.ai/settings/credits, or lower max_tokens / prompt size to fit your remaining balance.\"}}}"
+  },
+  {
+    "id": "x-ai/grok-4.3",
+    "reason": "HTTP 402 - {\"error\":{\"message\":\"Insufficient credits. This account never purchased credits. Make sure your key is on the correct account or org, and if so, purchase more at https://openrouter.ai/settings/credits\",\"code\":402,\"metadata\":{\"limit_source\":\"openrouter_credits\",\"remedy_hint\":\"Add credits at https://openrouter.ai/settings/credits, or lower max_tokens / prompt size to fit your remaining balance.\"}}}"
+  },
+  {
+    "id": "sao10k/l3.3-euryale-70b",
+    "reason": "HTTP 402 - {\"error\":{\"message\":\"Insufficient credits. This account never purchased credits. Make sure your key is on the correct account or org, and if so, purchase more at https://openrouter.ai/settings/credits\",\"code\":402,\"metadata\":{\"limit_source\":\"openrouter_credits\",\"remedy_hint\":\"Add credits at https://openrouter.ai/settings/credits, or lower max_tokens / prompt size to fit your remaining balance.\"}}}"
+  },
+  {
+    "id": "x-ai/grok-4.20",
+    "reason": "HTTP 402 - {\"error\":{\"message\":\"Insufficient credits. This account never purchased credits. Make sure your key is on the correct account or org, and if so, purchase more at https://openrouter.ai/settings/credits\",\"code\":402,\"metadata\":{\"limit_source\":\"openrouter_credits\",\"remedy_hint\":\"Add credits at https://openrouter.ai/settings/credits, or lower max_tokens / prompt size to fit your remaining balance.\"}}}"
+  },
+  {
+    "id": "sao10k/l3-lunaris-8b",
+    "reason": "HTTP 402 - {\"error\":{\"message\":\"Insufficient credits. This account never purchased credits. Make sure your key is on the correct account or org, and if so, purchase more at https://openrouter.ai/settings/credits\",\"code\":402,\"metadata\":{\"limit_source\":\"openrouter_credits\",\"remedy_hint\":\"Add credits at https://openrouter.ai/settings/credits, or lower max_tokens / prompt size to fit your remaining balance.\"}}}"
+  },
+  {
+    "id": "sao10k/l3.1-euryale-70b",
+    "reason": "HTTP 402 - {\"error\":{\"message\":\"Insufficient credits. This account never purchased credits. Make sure your key is on the correct account or org, and if so, purchase more at https://openrouter.ai/settings/credits\",\"code\":402,\"metadata\":{\"limit_source\":\"openrouter_credits\",\"remedy_hint\":\"Add credits at https://openrouter.ai/settings/credits, or lower max_tokens / prompt size to fit your remaining balance.\"}}}"
+  },
+  {
+    "id": "x-ai/grok-4.5",
+    "reason": "HTTP 402 - {\"error\":{\"message\":\"Insufficient credits. This account never purchased credits. Make sure your key is on the correct account or org, and if so, purchase more at https://openrouter.ai/settings/credits\",\"code\":402,\"metadata\":{\"limit_source\":\"openrouter_credits\",\"remedy_hint\":\"Add credits at https://openrouter.ai/settings/credits, or lower max_tokens / prompt size to fit your remaining balance.\"}}}"
+  },
+  {
+    "id": "x-ai/grok-build-0.1",
+    "reason": "HTTP 402 - {\"error\":{\"message\":\"Insufficient credits. This account never purchased credits. Make sure your key is on the correct account or org, and if so, purchase more at https://openrouter.ai/settings/credits\",\"code\":402,\"metadata\":{\"limit_source\":\"openrouter_credits\",\"remedy_hint\":\"Add credits at https://openrouter.ai/settings/credits, or lower max_tokens / prompt size to fit your remaining balance.\"}}}"
+  },
+  {
+    "id": "thedrummer/rocinante-12b",
+    "reason": "HTTP 402 - {\"error\":{\"message\":\"Insufficient credits. This account never purchased credits. Make sure your key is on the correct account or org, and if so, purchase more at https://openrouter.ai/settings/credits\",\"code\":402,\"metadata\":{\"limit_source\":\"openrouter_credits\",\"remedy_hint\":\"Add credits at https://openrouter.ai/settings/credits, or lower max_tokens / prompt size to fit your remaining balance.\"}}}"
+  },
+  {
+    "id": "tencent/hy3-preview",
+    "reason": "HTTP 402 - {\"error\":{\"message\":\"Insufficient credits. This account never purchased credits. Make sure your key is on the correct account or org, and if so, purchase more at https://openrouter.ai/settings/credits\",\"code\":402,\"metadata\":{\"limit_source\":\"openrouter_credits\",\"remedy_hint\":\"Add credits at https://openrouter.ai/settings/credits, or lower max_tokens / prompt size to fit your remaining balance.\"}}}"
+  },
+  {
+    "id": "thinkingmachines/inkling-small",
+    "reason": "HTTP 402 - {\"error\":{\"message\":\"Insufficient credits. This account never purchased credits. Make sure your key is on the correct account or org, and if so, purchase more at https://openrouter.ai/settings/credits\",\"code\":402,\"metadata\":{\"limit_source\":\"openrouter_credits\",\"remedy_hint\":\"Add credits at https://openrouter.ai/settings/credits, or lower max_tokens / prompt size to fit your remaining balance.\"}}}"
+  },
+  {
+    "id": "thinkingmachines/inkling",
+    "reason": "HTTP 402 - {\"error\":{\"message\":\"Insufficient credits. This account never purchased credits. Make sure your key is on the correct account or org, and if so, purchase more at https://openrouter.ai/settings/credits\",\"code\":402,\"metadata\":{\"limit_source\":\"openrouter_credits\",\"remedy_hint\":\"Add credits at https://openrouter.ai/settings/credits, or lower max_tokens / prompt size to fit your remaining balance.\"}}}"
+  },
+  {
+    "id": "thedrummer/cydonia-24b-v4.1",
+    "reason": "HTTP 402 - {\"error\":{\"message\":\"Insufficient credits. This account never purchased credits. Make sure your key is on the correct account or org, and if so, purchase more at https://openrouter.ai/settings/credits\",\"code\":402,\"metadata\":{\"limit_source\":\"openrouter_credits\",\"remedy_hint\":\"Add credits at https://openrouter.ai/settings/credits, or lower max_tokens / prompt size to fit your remaining balance.\"}}}"
+  },
+  {
+    "id": "tencent/hunyuan-a13b-instruct",
+    "reason": "HTTP 402 - {\"error\":{\"message\":\"Insufficient credits. This account never purchased credits. Make sure your key is on the correct account or org, and if so, purchase more at https://openrouter.ai/settings/credits\",\"code\":402,\"metadata\":{\"limit_source\":\"openrouter_credits\",\"remedy_hint\":\"Add credits at https://openrouter.ai/settings/credits, or lower max_tokens / prompt size to fit your remaining balance.\"}}}"
+  },
+  {
+    "id": "thedrummer/skyfall-36b-v2",
+    "reason": "HTTP 402 - {\"error\":{\"message\":\"Insufficient credits. This account never purchased credits. Make sure your key is on the correct account or org, and if so, purchase more at https://openrouter.ai/settings/credits\",\"code\":402,\"metadata\":{\"limit_source\":\"openrouter_credits\",\"remedy_hint\":\"Add credits at https://openrouter.ai/settings/credits, or lower max_tokens / prompt size to fit your remaining balance.\"}}}"
+  },
+  {
+    "id": "tencent/hy3",
+    "reason": "HTTP 402 - {\"error\":{\"message\":\"Insufficient credits. This account never purchased credits. Make sure your key is on the correct account or org, and if so, purchase more at https://openrouter.ai/settings/credits\",\"code\":402,\"metadata\":{\"limit_source\":\"openrouter_credits\",\"remedy_hint\":\"Add credits at https://openrouter.ai/settings/credits, or lower max_tokens / prompt size to fit your remaining balance.\"}}}"
+  },
+  {
+    "id": "thedrummer/unslopnemo-12b",
+    "reason": "HTTP 402 - {\"error\":{\"message\":\"Insufficient credits. This account never purchased credits. Make sure your key is on the correct account or org, and if so, purchase more at https://openrouter.ai/settings/credits\",\"code\":402,\"metadata\":{\"limit_source\":\"openrouter_credits\",\"remedy_hint\":\"Add credits at https://openrouter.ai/settings/credits, or lower max_tokens / prompt size to fit your remaining balance.\"}}}"
+  },
+  {
+    "id": "upstage/solar-pro-3",
+    "reason": "HTTP 402 - {\"error\":{\"message\":\"Insufficient credits. This account never purchased credits. Make sure your key is on the correct account or org, and if so, purchase more at https://openrouter.ai/settings/credits\",\"code\":402,\"metadata\":{\"limit_source\":\"openrouter_credits\",\"remedy_hint\":\"Add credits at https://openrouter.ai/settings/credits, or lower max_tokens / prompt size to fit your remaining balance.\"}}}"
+  },
+  {
+    "id": "writer/palmyra-x5",
+    "reason": "HTTP 402 - {\"error\":{\"message\":\"Insufficient credits. This account never purchased credits. Make sure your key is on the correct account or org, and if so, purchase more at https://openrouter.ai/settings/credits\",\"code\":402,\"metadata\":{\"limit_source\":\"openrouter_credits\",\"remedy_hint\":\"Add credits at https://openrouter.ai/settings/credits, or lower max_tokens / prompt size to fit your remaining balance.\"}}}"
+  },
+  {
+    "id": "xiaomi/mimo-v2.5-pro",
+    "reason": "HTTP 402 - {\"error\":{\"message\":\"Insufficient credits. This account never purchased credits. Make sure your key is on the correct account or org, and if so, purchase more at https://openrouter.ai/settings/credits\",\"code\":402,\"metadata\":{\"limit_source\":\"openrouter_credits\",\"remedy_hint\":\"Add credits at https://openrouter.ai/settings/credits, or lower max_tokens / prompt size to fit your remaining balance.\"}}}"
+  },
+  {
+    "id": "z-ai/glm-4.6",
+    "reason": "HTTP 402 - {\"error\":{\"message\":\"Insufficient credits. This account never purchased credits. Make sure your key is on the correct account or org, and if so, purchase more at https://openrouter.ai/settings/credits\",\"code\":402,\"metadata\":{\"limit_source\":\"openrouter_credits\",\"remedy_hint\":\"Add credits at https://openrouter.ai/settings/credits, or lower max_tokens / prompt size to fit your remaining balance.\"}}}"
+  },
+  {
+    "id": "xiaomi/mimo-v2.5",
+    "reason": "HTTP 402 - {\"error\":{\"message\":\"Insufficient credits. This account never purchased credits. Make sure your key is on the correct account or org, and if so, purchase more at https://openrouter.ai/settings/credits\",\"code\":402,\"metadata\":{\"limit_source\":\"openrouter_credits\",\"remedy_hint\":\"Add credits at https://openrouter.ai/settings/credits, or lower max_tokens / prompt size to fit your remaining balance.\"}}}"
+  },
+  {
+    "id": "z-ai/glm-4.5v",
+    "reason": "HTTP 402 - {\"error\":{\"message\":\"Insufficient credits. This account never purchased credits. Make sure your key is on the correct account or org, and if so, purchase more at https://openrouter.ai/settings/credits\",\"code\":402,\"metadata\":{\"limit_source\":\"openrouter_credits\",\"remedy_hint\":\"Add credits at https://openrouter.ai/settings/credits, or lower max_tokens / prompt size to fit your remaining balance.\"}}}"
+  },
+  {
+    "id": "z-ai/glm-4.6v",
+    "reason": "HTTP 402 - {\"error\":{\"message\":\"Insufficient credits. This account never purchased credits. Make sure your key is on the correct account or org, and if so, purchase more at https://openrouter.ai/settings/credits\",\"code\":402,\"metadata\":{\"limit_source\":\"openrouter_credits\",\"remedy_hint\":\"Add credits at https://openrouter.ai/settings/credits, or lower max_tokens / prompt size to fit your remaining balance.\"}}}"
+  },
+  {
+    "id": "microsoft/wizardlm-2-8x22b",
+    "reason": "HTTP 402 - {\"error\":{\"message\":\"Insufficient credits. This account never purchased credits. Make sure your key is on the correct account or org, and if so, purchase more at https://openrouter.ai/settings/credits\",\"code\":402,\"metadata\":{\"limit_source\":\"openrouter_credits\",\"remedy_hint\":\"Add credits at https://openrouter.ai/settings/credits, or lower max_tokens / prompt size to fit your remaining balance.\"}}}"
+  },
+  {
+    "id": "z-ai/glm-4.5",
+    "reason": "HTTP 402 - {\"error\":{\"message\":\"Insufficient credits. This account never purchased credits. Make sure your key is on the correct account or org, and if so, purchase more at https://openrouter.ai/settings/credits\",\"code\":402,\"metadata\":{\"limit_source\":\"openrouter_credits\",\"remedy_hint\":\"Add credits at https://openrouter.ai/settings/credits, or lower max_tokens / prompt size to fit your remaining balance.\"}}}"
+  },
+  {
+    "id": "cognitivecomputations/dolphin-mistral-24b-venice-edition",
+    "reason": "HTTP 402 - {\"error\":{\"message\":\"Insufficient credits. This account never purchased credits. Make sure your key is on the correct account or org, and if so, purchase more at https://openrouter.ai/settings/credits\",\"code\":402,\"metadata\":{\"limit_source\":\"openrouter_credits\",\"remedy_hint\":\"Add credits at https://openrouter.ai/settings/credits, or lower max_tokens / prompt size to fit your remaining balance.\"}}}"
+  },
+  {
+    "id": "z-ai/glm-4.5-air",
+    "reason": "HTTP 402 - {\"error\":{\"message\":\"Insufficient credits. This account never purchased credits. Make sure your key is on the correct account or org, and if so, purchase more at https://openrouter.ai/settings/credits\",\"code\":402,\"metadata\":{\"limit_source\":\"openrouter_credits\",\"remedy_hint\":\"Add credits at https://openrouter.ai/settings/credits, or lower max_tokens / prompt size to fit your remaining balance.\"}}}"
+  },
+  {
+    "id": "z-ai/glm-5.1",
+    "reason": "HTTP 402 - {\"error\":{\"message\":\"Insufficient credits. This account never purchased credits. Make sure your key is on the correct account or org, and if so, purchase more at https://openrouter.ai/settings/credits\",\"code\":402,\"metadata\":{\"limit_source\":\"openrouter_credits\",\"remedy_hint\":\"Add credits at https://openrouter.ai/settings/credits, or lower max_tokens / prompt size to fit your remaining balance.\"}}}"
+  },
+  {
+    "id": "z-ai/glm-5-turbo",
+    "reason": "HTTP 402 - {\"error\":{\"message\":\"Insufficient credits. This account never purchased credits. Make sure your key is on the correct account or org, and if so, purchase more at https://openrouter.ai/settings/credits\",\"code\":402,\"metadata\":{\"limit_source\":\"openrouter_credits\",\"remedy_hint\":\"Add credits at https://openrouter.ai/settings/credits, or lower max_tokens / prompt size to fit your remaining balance.\"}}}"
+  },
+  {
+    "id": "z-ai/glm-4.7",
+    "reason": "HTTP 402 - {\"error\":{\"message\":\"Insufficient credits. This account never purchased credits. Make sure your key is on the correct account or org, and if so, purchase more at https://openrouter.ai/settings/credits\",\"code\":402,\"metadata\":{\"limit_source\":\"openrouter_credits\",\"remedy_hint\":\"Add credits at https://openrouter.ai/settings/credits, or lower max_tokens / prompt size to fit your remaining balance.\"}}}"
+  },
+  {
+    "id": "z-ai/glm-5",
+    "reason": "HTTP 402 - {\"error\":{\"message\":\"Insufficient credits. This account never purchased credits. Make sure your key is on the correct account or org, and if so, purchase more at https://openrouter.ai/settings/credits\",\"code\":402,\"metadata\":{\"limit_source\":\"openrouter_credits\",\"remedy_hint\":\"Add credits at https://openrouter.ai/settings/credits, or lower max_tokens / prompt size to fit your remaining balance.\"}}}"
+  },
+  {
+    "id": "z-ai/glm-4.7-flash",
+    "reason": "HTTP 402 - {\"error\":{\"message\":\"Insufficient credits. This account never purchased credits. Make sure your key is on the correct account or org, and if so, purchase more at https://openrouter.ai/settings/credits\",\"code\":402,\"metadata\":{\"limit_source\":\"openrouter_credits\",\"remedy_hint\":\"Add credits at https://openrouter.ai/settings/credits, or lower max_tokens / prompt size to fit your remaining balance.\"}}}"
+  },
+  {
+    "id": "z-ai/glm-5v-turbo",
+    "reason": "HTTP 402 - {\"error\":{\"message\":\"Insufficient credits. This account never purchased credits. Make sure your key is on the correct account or org, and if so, purchase more at https://openrouter.ai/settings/credits\",\"code\":402,\"metadata\":{\"limit_source\":\"openrouter_credits\",\"remedy_hint\":\"Add credits at https://openrouter.ai/settings/credits, or lower max_tokens / prompt size to fit your remaining balance.\"}}}"
+  },
+  {
+    "id": "z-ai/glm-5.2",
+    "reason": "HTTP 402 - {\"error\":{\"message\":\"Insufficient credits. This account never purchased credits. Make sure your key is on the correct account or org, and if so, purchase more at https://openrouter.ai/settings/credits\",\"code\":402,\"metadata\":{\"limit_source\":\"openrouter_credits\",\"remedy_hint\":\"Add credits at https://openrouter.ai/settings/credits, or lower max_tokens / prompt size to fit your remaining balance.\"}}}"
+  }
+]
