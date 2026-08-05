@@ -87,9 +87,9 @@ export async function POST(request) {
          domainForSearch = new URL(targetUrl).hostname.replace('www.', '');
       } catch (e) {}
     }
-    const compRes = await searchGoogle(`${domainForSearch} top competitors alternatives software industry`, serperKey);
+    const compRes = await searchGoogle(`"${domainForSearch}" competitors OR alternatives OR similar companies`, serperKey);
     if (compRes && Array.isArray(compRes.organic)) {
-      competitorSearchContext = compRes.organic.slice(0, 8).map(r => `${r.title}: ${r.snippet}\nURL: ${r.link}`).join('\n\n');
+      competitorSearchContext = compRes.organic.slice(0, 10).map(r => `${r.title}: ${r.snippet}\nURL: ${r.link}`).join('\n\n');
     }
     console.log('=== [4. SERPER COMPETITOR SEARCH CONTEXT] ===:', competitorSearchContext ? competitorSearchContext.substring(0, 150) + '...' : 'None');
 
@@ -108,9 +108,10 @@ export async function POST(request) {
       ${competitorSearchContext}
       
       CRITICAL INSTRUCTIONS:
-      1. DO NOT output "Not Available" or "Information unavailable" if you can deduce the answer from the Google Search Snippets or Competitor Context.
-      2. If Website Crawl Data is missing, you MUST heavily rely on the snippets to determine the Business Model, Target Audience, Products, and Key Observations.
-      3. For any field (like Phone/Address) that truly has no evidence in either the crawl or snippets, you may leave it as "Not Available".
+      1. DO NOT output "Not Available" if you can deduce the answer intelligently from the context.
+      2. If Website Crawl Data is missing or sparse, you MUST heavily rely on the snippets to determine Business Model, Target Audience, and Products.
+      3. COMPETITORS: Look very closely at the Competitor Search Context. Extract real companies. Categorize them as Direct, Indirect, or Regional, and explicitly explain WHY they compete.
+      4. For fields like Phone/Address that truly have no evidence, you may leave them as "Not Available".
       
       Based on the above data, generate the comprehensive JSON report as requested.
     `;

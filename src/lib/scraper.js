@@ -1,6 +1,6 @@
 import axios from 'axios';
 import * as cheerio from 'cheerio';
-const IMPORTANT_PAGES = ['about', 'products', 'product', 'services', 'service', 'solutions', 'solution', 'pricing', 'contact', 'careers'];
+const IMPORTANT_PAGES = ['about', 'products', 'product', 'services', 'service', 'solutions', 'solution', 'pricing', 'contact', 'careers', 'team', 'who-we-are', 'our-story', 'company'];
 
 function hashText(str) {
   let hash = 0;
@@ -110,7 +110,17 @@ export async function scrapeWebsiteDeep(baseUrl) {
       }, 0);
       data = res.data;
     } catch (e) {
-      fallbackToPuppeteer = true;
+      // Aggressively try /about before giving up on fast fetch
+      try {
+        const altUrl = baseUrl.endsWith('/') ? baseUrl + 'about' : baseUrl + '/about';
+        const resAlt = await fetchWithRetry(altUrl, {
+          headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' },
+          timeout: 3000
+        }, 0);
+        data = resAlt.data;
+      } catch (e2) {
+        fallbackToPuppeteer = true;
+      }
     }
     
     if (!fallbackToPuppeteer) {
