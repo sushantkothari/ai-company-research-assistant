@@ -98,39 +98,58 @@ export async function scrapeWebsiteDeep(baseUrl) {
     
     let data = null;
     let fallbackToPuppeteer = false;
+    let homeText = '';
+    const fetchOptions = {
+      headers: { 
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.5'
+      },
+      timeout: 4000
+    };
     
     try {
-      const res = await fetchWithRetry(baseUrl, {
-        headers: { 
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-          'Accept-Language': 'en-US,en;q=0.5'
-        },
-        timeout: 4000
-      }, 0);
+      const res = await fetchWithRetry(baseUrl, fetchOptions, 0);
       data = res.data;
+      const $ = cheerio.load(data);
+      homeText = extractText($);
     } catch (e) {
-      // Aggressively try /about before giving up on fast fetch
-      try {
-        const altUrl = baseUrl.endsWith('/') ? baseUrl + 'about' : baseUrl + '/about';
-        const resAlt = await fetchWithRetry(altUrl, {
-          headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' },
-          timeout: 3000
-        }, 0);
-        data = resAlt.data;
-      } catch (e2) {
+      // Ignored initially
+    }
+    
+    // Check if Cloudflare or empty
+    if (!data || homeText.length < 300 || homeText.toLowerCase().includes('cloudflare') || homeText.toLowerCase().includes('just a moment')) {
+      // Aggressive fallback to other common pages concurrently
+      const fallbackRoutes = ['/about', '/company', '/about-us', '/services', '/products'];
+      const baseNoSlash = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+      
+      const fallbackRequests = fallbackRoutes.map(route => 
+        fetchWithRetry(baseNoSlash + route, fetchOptions, 0)
+      );
+      
+      const fallbackResults = await Promise.allSettled(fallbackRequests);
+      
+      let foundValidFallback = false;
+      for (const res of fallbackResults) {
+        if (res.status === 'fulfilled' && res.value?.data) {
+          const $ = cheerio.load(res.value.data);
+          const t = extractText($);
+          if (t.length > 300 && !t.toLowerCase().includes('cloudflare') && !t.toLowerCase().includes('just a moment')) {
+            data = res.value.data;
+            homeText = t;
+            foundValidFallback = true;
+            break;
+          }
+        }
+      }
+      
+      if (!foundValidFallback) {
         fallbackToPuppeteer = true;
       }
     }
     
     if (!fallbackToPuppeteer) {
       const $ = cheerio.load(data);
-      const homeText = extractText($);
-      
-      // If Cloudflare block page or very short
-      if (homeText.length < 300 || homeText.toLowerCase().includes('cloudflare') || homeText.toLowerCase().includes('just a moment')) {
-        fallbackToPuppeteer = true;
-      } else {
         const linksToCrawl = new Set();
         const foundImportantLinks = [];
         
@@ -193,7 +212,6 @@ export async function scrapeWebsiteDeep(baseUrl) {
           text: combinedText.substring(0, 18000),
           pagesCrawled
         };
-      }
     }
     
     if (fallbackToPuppeteer) {

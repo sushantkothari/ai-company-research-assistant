@@ -4,33 +4,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import styles from './MainUI.module.css';
 import { useSettings } from '@/context/SettingsContext';
 
-const CURATED_MODELS = [
-  { id: 'poolside/laguna-s-2.1:free', name: '🟢 Poolside Laguna S 2.1 — Free' },
-  { id: 'nvidia/nemotron-3-super-120b-a12b:free', name: '🟢 Nemotron-3 Super 120B — Free' },
-  { id: 'nvidia/nemotron-3-nano-30b-a3b:free', name: '🟢 Nemotron-3 Nano 30B — Free' },
-  { id: 'google/gemma-4-26b-a4b-it:free', name: '🟢 Gemma 4 26B — Free' },
-  { id: 'openai/gpt-oss-20b:free', name: '🟢 GPT-OSS 20B — Free' },
-  { id: 'openai/gpt-4o', name: '🔵 GPT-4o — Paid' },
-  { id: 'openai/gpt-4o-mini', name: '🔵 GPT-4o Mini — Paid' },
-  { id: 'openai/o1-mini', name: '🔵 o1-mini — Paid' },
-  { id: 'anthropic/claude-3.5-sonnet', name: '🔵 Claude 3.5 Sonnet — Paid' },
-  { id: 'anthropic/claude-3.5-haiku', name: '🔵 Claude 3.5 Haiku — Paid' },
-  { id: 'anthropic/claude-3-opus', name: '🔵 Claude 3 Opus — Paid' },
-  { id: 'google/gemini-pro-1.5', name: '🔵 Gemini 1.5 Pro — Paid' },
-  { id: 'google/gemini-1.5-flash', name: '🔵 Gemini 1.5 Flash — Paid' },
-  { id: 'meta-llama/llama-3.3-70b-instruct', name: '🔵 Llama 3.3 70B — Paid' },
-  { id: 'meta-llama/llama-3.1-405b-instruct', name: '🔵 Llama 3.1 405B — Paid' },
-  { id: 'deepseek/deepseek-chat', name: '🔵 DeepSeek V3 — Paid' },
-  { id: 'qwen/qwen-max', name: '🔵 Qwen Max — Paid' }
-];
-
-const SAMPLE_BADGES = [
-  { label: 'Microsoft', value: 'Microsoft' },
-  { label: 'Stripe', value: 'Stripe' },
-  { label: 'Tesla', value: 'Tesla' },
-  { label: 'Aurora', value: 'https://aurora.dev' }
-];
-
 export default function MainUI() {
   const { settings, updateSetting } = useSettings();
   const [activeTab, setActiveTab] = useState('API');
@@ -43,10 +16,19 @@ export default function MainUI() {
   const [isSendingDiscord, setIsSendingDiscord] = useState(false);
   const [savedConfigToast, setSavedConfigToast] = useState(false);
   
-  const [models, setModels] = useState(CURATED_MODELS);
+  const [models, setModels] = useState([
+    { id: 'meta-llama/llama-3.3-70b-instruct', name: '🟢 Llama 3.3 70B Instruct (Default - Free)' }
+  ]);
   const messagesEndRef = useRef(null);
 
-
+  useEffect(() => {
+    fetch('/api/models')
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.models) setModels(data.models);
+      })
+      .catch(err => console.error("Error loading models:", err));
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });

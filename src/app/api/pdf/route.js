@@ -378,7 +378,7 @@ export async function POST(request) {
     const bypassIdm = request.headers.get('x-bypass-idm') === 'true';
 
     const headers = {
-      'Content-Type': bypassIdm ? 'application/octet-stream' : 'application/pdf',
+      'Content-Type': bypassIdm ? 'text/plain' : 'application/pdf',
       'Content-Length': uint8Array.length.toString(),
     };
 
