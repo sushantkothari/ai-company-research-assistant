@@ -60,23 +60,30 @@ Your output MUST be a valid JSON object matching this schema exactly:
 Do not wrap JSON in markdown (no \`\`\`json). Return ONLY raw JSON.`;
 
   const makeRequest = async (messages) => {
-    return await axios.post(
-      'https://openrouter.ai/api/v1/chat/completions',
-      {
-        model: model,
-        messages: messages,
-        response_format: { type: "json_object" }
-      },
-      {
-        headers: {
-          'Authorization': `Bearer ${apiKey}`,
-          'HTTP-Referer': 'https://reluconsultancy.in',
-          'X-Title': 'AI Company Research Assistant',
-          'Content-Type': 'application/json'
-        },
-        timeout: 60000
+    const payload = {
+      model: model,
+      messages: messages,
+      response_format: { type: "json_object" }
+    };
+    const headers = {
+      'Authorization': `Bearer ${apiKey}`,
+      'HTTP-Referer': 'https://reluconsultancy.in',
+      'X-Title': 'AI Company Research Assistant',
+      'Content-Type': 'application/json'
+    };
+
+    try {
+      return await axios.post('https://openrouter.ai/api/v1/chat/completions', payload, { headers, timeout: 60000 });
+    } catch (err) {
+      // If model does not support response_format: { type: "json_object" }, retry without it
+      const errMsg = err?.response?.data?.error?.message || err.message || '';
+      if (errMsg.includes('Provider returned error') || errMsg.includes('response_format') || errMsg.includes('400')) {
+        console.warn(`[OpenRouter] Model ${model} failed with response_format, retrying without response_format...`);
+        delete payload.response_format;
+        return await axios.post('https://openrouter.ai/api/v1/chat/completions', payload, { headers, timeout: 60000 });
       }
-    );
+      throw err;
+    }
   };
 
   const parseAndNormalize = (rawContent) => {
