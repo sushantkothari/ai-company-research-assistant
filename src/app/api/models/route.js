@@ -17,7 +17,7 @@ export async function GET() {
       throw new Error('Invalid OpenRouter response format');
     }
 
-    const EXCLUDED_KEYWORDS = ['embed', 'whisper', 'dall-e', 'stable-diffusion', 'tts', 'sdxl', 'flux', 'midjourney', 'imagen', 'video', 'audio', 'lyria', 'safety', 'guard', 'moderation', 'classifier', 'ling', 'gemma-4', 'nemotron'];
+    const EXCLUDED_KEYWORDS = ['embed', 'whisper', 'dall-e', 'stable-diffusion', 'tts', 'sdxl', 'flux', 'midjourney', 'imagen', 'video', 'audio', 'lyria', 'safety', 'guard', 'moderation', 'classifier'];
 
     let availableModels = data.data
       .filter(m => {
